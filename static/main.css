@@ -1,0 +1,20 @@
+html {
+    font-family: "Arial";
+}
+/* cs selectors */
+input, textarea {
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+    margin-bottom: 20px;
+
+}
+
+label, input, textarea {
+    display: block;
+}
+
+textarea {
+    height: 200px;
+
+}

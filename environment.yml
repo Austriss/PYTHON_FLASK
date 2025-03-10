@@ -1,0 +1,11 @@
+# conda env create --file environment.yml
+# conda env update --file environment.yml
+# conda info --envs
+# conda remove --name course_flask --all
+
+name: course_flask
+channels:
+  - anaconda
+  - conda-forge
+dependencies:
+  - flask
