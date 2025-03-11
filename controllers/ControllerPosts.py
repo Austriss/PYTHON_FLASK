@@ -17,6 +17,8 @@ class ControllerPosts:
             post.body = request.form.get('post_body').strip()
 
             post_id = ControllerDatabase.insert_post(post)
+            # postback / redirect after GET => POST => redirect => GET
+            #/posts/view/2
             return redirect(url_for('posts.post_view', post_id=post_id))
 
         return flask.render_template(
@@ -26,12 +28,18 @@ class ControllerPosts:
     @staticmethod
     @blueprint.route("/view/<post_id>", methods=["GET"])
     def post_view(post_id):
-        post = ModelPost
-        post.title = "dummy"
-
-        #TODO load ModelPost from db
-
+        post = ControllerDatabase.get_post(post_id)
         return flask.render_template(
             'posts/view.html',
             post=post
+        )
+
+    @staticmethod
+    @blueprint.route("/delete/<post_id>", methods=["POST"])
+    def post_delete(post_id):
+        if request.method == "POST":
+            ControllerDatabase.delete_post(post_id)
+            return redirect(url_for('posts.post_view', post_id=post_id))
+        return flask.render_template(
+            'posts/new.html',
         )

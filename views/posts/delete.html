@@ -7,8 +7,8 @@
         <p>
             {{ post.body }}
         </p>
-        <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
-            <input type="hidden" value="{{ post.post_id }}" name="post_id" />
+        <form action="{{ url_for('posts.post_delete') }}" method="POST">
+           <input type="hidden" value="{{ post.post_id }}" name="post_id" />
             <input type="submit" value="Delete" />
             </form>
     </body>
