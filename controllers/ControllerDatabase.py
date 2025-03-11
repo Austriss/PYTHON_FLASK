@@ -14,26 +14,32 @@ class ControllerDatabase:
             with ControllerDatabase.__connection() as connection:
                 cursor = connection.cursor()
                 cursor.execute(
-                    'INSERT INTO posts (body, title) VALUES (:body, :title);',
+                    'INSERT INTO posts (body, title, url_slug) VALUES (:body, :title, :url_slug);',
                     post.__dict__ #contains post.body, body.title
                 )
                 post_id = cursor.execute('SELECT last_insert_rowid()').fetchone()[0]
-                #connection.commit()
+                connection.commit()
                 #cursor.close()
         except Exception as exc:
             print(exc)
         return post_id
 
     @staticmethod
-    def get_post(post_id: int) -> ModelPost:
+    def get_post(post_id: int = None, url_slug: str = None) -> ModelPost:
         post = None
         try:
             with ControllerDatabase.__connection() as connection:
                 cursor = connection.cursor()
-                query = cursor.execute(
-                    'SELECT * FROM posts WHERE post_id = :post_id;',
-                    {'post_id': post_id}
-                )
+                if post_id is not None:
+                    query = cursor.execute(
+                        'SELECT * FROM posts WHERE post_id = :post_id;',
+                        {'post_id': post_id}
+                    )
+                elif url_slug is not None:
+                    query = cursor.execute(
+                        'SELECT * FROM posts WHERE url_slug = :url_slug;',
+                        {'url_slug': url_slug}
+                    )
                 if query.rowcount:
                     col = query.fetchone()
                     col_names = [it[0] for it in query.description]
