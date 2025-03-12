@@ -9,3 +9,4 @@ channels:
   - conda-forge
 dependencies:
   - flask
+  - python-slugify

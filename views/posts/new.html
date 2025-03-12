@@ -4,12 +4,15 @@
     </head>
     <body>
         <h1>New post</h1>
-        <form action="{{ url_for('posts.new') }}" method="POST">
+        <form action="{{ url_for('posts.post_edit') }}" method="POST">
+            <input type="hidden" name="post_id" value="{{ post.post_id if post else '' }}">
             <label>TITLE</label>
-            <input type="text" name="post_title" />
+              <input type="text" name="post_title" value="{{ post.title if post else '' }}" />
 
             <label> BODY</label>
-            <textarea name="post_body"> </textarea>
+            <label>
+                <textarea name="post_body"> {{ post.body if post else '' }} </textarea>
+            </label>
 
             <input type="submit" value="Save" />
         </form>
