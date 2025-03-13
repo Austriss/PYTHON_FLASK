@@ -47,10 +47,8 @@ class ControllerPosts:
             else:
                 post.post_id = post_id
                 ControllerDatabase.update_post(post_id=post_id, post=post)
-              #  return redirect('/?edited=1')
 
             # postback / redirect after GET => POST => redirect => GET
-            #/posts/view/2
                 return redirect(url_for('posts.list_all_posts') + '/?edited=1')
 
         return flask.render_template(
