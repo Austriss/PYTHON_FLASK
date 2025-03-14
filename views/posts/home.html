@@ -1,27 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    {% if message|length > 0 %}
-        <div style="color: red;"> {{ message }}</div>
-    {% endif %}
-</body>
-<div> List of potsts</div>
-<table>
-    {% for post in posts %}
+{% extends 'posts/base.html' %}
+
+{% block title %} Posts list {% endblock %}
+
+{% block content %}
+
+<div class="header-title"> List of potsts</div>
+<div class="list-of-posts">
     <tr>
-        <td>{{ post.title }}</td>
-        <td>{{ post.modified }}</td>
-        <td>
+        <th class="post-table-header"> Title </th>
+        <th class="post-table-header"> modified </th>
+        <th class="post-table-header"> Actions </th>
+    </tr>
+    {% for post in posts %}
+    <div class="post-row">
+        <td class="post-cell">{{ post.title }}</td>
+        <td class="post-cell">{{ post.modified }}</td>
+        <td class="action-cell">
             <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
-            <input type="hidden" value="{{ post.post_id }}" name="post_id" />
-            <input type="submit" value="delete" />
-        </form>
+                <input type="hidden" value="{{ post.post_id }}" name="post_id" />
+                <input type="submit" value="delete" />
+            </form>
+            <form action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">
+                <input type="hidden" value="edit" name="button_type" />
+                <input type="hidden" value="{{ post.post_id }}" name="post_id" />
+                <input type="submit" value="Edit" name="edit_post" />
+            </form>
         </td>
-         </tr>
+    </div>
     {% endfor %}
-</table>
-</html>
+</div>
+    {% if message|length > 0 %}
+        <div class="post-action-message"> {{ message }}</div>
+    {% endif %}
+
+{% endblock %}

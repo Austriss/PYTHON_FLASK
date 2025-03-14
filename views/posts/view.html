@@ -1,13 +1,13 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
-    </head>
-    <body>
+{% extends "posts/base.html" %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block content %}
         <h1> {{ post.title }} </h1>
         <p>
             {{ post.body }}
         </p>
-        <form action="{{ url_for('posts.post_edit') }}" method="POST">
+        <form action="{{ url_for('posts.post_delete') }}" method="POST">
             <input type="hidden" value="delete" name="button_type" />
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />
             <input type="submit" value="Delete" name="delete_post"/>
@@ -17,5 +17,4 @@
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />
             <input type="submit" value="Edit" name="edit_post" />
         </form>
-    </body>
-</html>
+{% endblock %}

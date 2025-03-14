@@ -1,7 +1,9 @@
-<html>
-    <head>
-        <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
-    </head>
+{% extends "posts/base.html" %}
+
+{% block title %}{% if post %}Editing Post{% else %}New Post{% endif %}{% endblock %}
+
+{% block content %}
+
     <body>
         <h1>New post</h1>
         <form action="{{ url_for('posts.post_edit') }}" method="POST">
@@ -16,5 +18,4 @@
 
             <input type="submit" value="Save" />
         </form>
-    </body>
-</html>
+{% endblock %}
