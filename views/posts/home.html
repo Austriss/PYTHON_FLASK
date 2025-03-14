@@ -6,16 +6,16 @@
 
 <div class="header-title"> List of potsts</div>
 <div class="list-of-posts">
-    <tr>
-        <th class="post-table-header"> Title </th>
-        <th class="post-table-header"> modified </th>
-        <th class="post-table-header"> Actions </th>
-    </tr>
+    <div class="header-row">
+        <div class="post-table-header"> Title </div>
+        <div class="post-table-header"> modified </div>
+        <div class="post-table-header"> Actions </div>
+    <div/>
     {% for post in posts %}
     <div class="post-row">
-        <td class="post-cell">{{ post.title }}</td>
-        <td class="post-cell">{{ post.modified }}</td>
-        <td class="action-cell">
+        <div class="post-cell">{{ post.title }}</div>
+        <div class="post-cell">{{ post.modified }}</div>
+        <div class="action-cell">
             <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
                 <input type="hidden" value="{{ post.post_id }}" name="post_id" />
                 <input type="submit" value="delete" />
@@ -25,10 +25,12 @@
                 <input type="hidden" value="{{ post.post_id }}" name="post_id" />
                 <input type="submit" value="Edit" name="edit_post" />
             </form>
-        </td>
+        </div>
     </div>
     {% endfor %}
 </div>
+    <br/>
+    <br/>
     {% if message|length > 0 %}
         <div class="post-action-message"> {{ message }}</div>
     {% endif %}

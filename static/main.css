@@ -35,19 +35,22 @@ table {
 }
 
 .post-table-header {
-    padding: 8px;
+    flex: 1;
     text-align: left;
+    padding: 8px;
 }
 
 .post-cell {
     padding: 8px;
     text-align: left;
+    flex:1;
 }
 .action-cell {
     text-align: right;
     padding: 8px;
 }
 .list-of-posts {
+    background-color: bisque;
     display: flex;
     flex-direction: column;
     margin: 0 auto;
@@ -57,5 +60,8 @@ table {
     border-bottom: 1px;
     border-bottom-color: black;
     border-style: solid;
+}
+
+.header-row {
 
 }
