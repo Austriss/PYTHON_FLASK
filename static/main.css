@@ -18,3 +18,44 @@ textarea {
     height: 200px;
 
 }
+table {
+    margin: 0 auto;
+}
+
+.post-action-message {
+    font-size: 25px;
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+}
+.header-title {
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.post-table-header {
+    padding: 8px;
+    text-align: left;
+}
+
+.post-cell {
+    padding: 8px;
+    text-align: left;
+}
+.action-cell {
+    text-align: right;
+    padding: 8px;
+}
+.list-of-posts {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    max-width: 800px;
+}
+.post-row {
+    border-bottom: 1px;
+    border-bottom-color: black;
+    border-style: solid;
+
+}
