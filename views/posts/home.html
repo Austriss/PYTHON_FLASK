@@ -6,15 +6,10 @@
 
 <div class="header-title"> List of potsts</div>
 <div class="list-of-posts">
-    <div class="header-row">
-        <div class="post-table-header"> Title </div>
-        <div class="post-table-header"> modified </div>
-        <div class="post-table-header"> Actions </div>
-    <div/>
     {% for post in posts %}
     <div class="post-row">
-        <div class="post-cell">{{ post.title }}</div>
-        <div class="post-cell">{{ post.modified }}</div>
+        <div class="post-cell"> Title: {{ post.title }}</div>
+        <div class="post-cell"> modified: {{ post.modified }}</div>
         <div class="action-cell">
             <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
                 <input type="hidden" value="{{ post.post_id }}" name="post_id" />
