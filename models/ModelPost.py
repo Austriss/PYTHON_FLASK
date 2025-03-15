@@ -13,3 +13,9 @@ class ModelPost:
     created: int = 0
     modified: int = 0
     status: EnumPostStatus = EnumPostStatus.not_set # ALT + ENTER
+
+    parent_post_id: int = None
+    children_posts = []
+    depth: int = 0
+
+    all_tags = []

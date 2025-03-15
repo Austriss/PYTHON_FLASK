@@ -5,23 +5,41 @@
 {% block content %}
 
         <h1> {% if post %} Edit post {% else %} New post {% endif %} </h1>
-        <form action="{{ url_for('posts.post_edit') }}" method="POST">
+        <form action="{{ url_for('posts.post_edit') }}"
+              method="POST"
+              enctype="multipart/form-data"
+        >
             <input type="hidden" name="post_id" value="{{ post.post_id if post else '' }}">
-            <label>TITLE</label>
+            <label>title</label>
               <input type="text" name="post_title" value="{{ post.title if post else '' }}" />
 
-            <label> BODY</label>
+            <label> body</label>
             <label>
                 <textarea name="post_body"> {{ post.body if post else '' }} </textarea>
             </label>
-            <label>Page parent</label>
+            <label>post parent</label>
             <select name="parent_post_id">
 
                 {% for item in post_parent_id_by_title %}
                     <option value="{{ item[0] }}" {% if post.parent_post_id == item[0] %} selected="true" {% endif %}>{{ item[1] }}</option>
                 {% endfor %}
-
             </select>
+
+            <label>TAgs</label>
+            <div>
+                {% for tag in all_tags %}
+                <div>
+                    <input type="checkbox" name="post_tag_ids[]" value="{{ tag.tag_id }}"
+                   {% if tag.tag_id in post_tag_ids %}
+                    checked
+                   {% endif %}
+                   >
+                    <span> {{ tag.label }} </span>
+                </div>
+                {% endfor %}
+            </div>
+            <label> Thumbnail file </label>
+            <input type="file" name="file_thumbnail">
 
             <input type="submit" value="Save" />
         </form>

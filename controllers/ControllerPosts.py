@@ -59,7 +59,7 @@ class ControllerPosts:
                 if post_id:
                     post = ControllerDatabase.get_post(post_id=post_id)
                     return flask.render_template(
-                        "posts/new.html",
+                        'posts/new.html',
                         post=post,
                         post_tag_ids=post_tag_ids,
                         all_tags=all_tags,
@@ -104,6 +104,8 @@ class ControllerPosts:
         return flask.render_template(
             'posts/new.html',
             post=post,
+            post_tag_ids=post_tag_ids,
+            all_tags=all_tags,
             post_parent_id_by_title=post_parent_id_by_title
         )
 
