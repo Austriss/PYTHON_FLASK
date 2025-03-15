@@ -1,4 +1,4 @@
-{% extends 'posts/base.html' %}
+{% extends 'layouts/base.html' %}
 
 {% block title %} Posts list {% endblock %}
 
@@ -7,7 +7,7 @@
 <div class="header-title"> List of potsts</div>
 <div class="list-of-posts">
     {% for post in posts %}
-    <div class="post-row">
+    <div style="padding-left: {{ 50 * post.depth }}px">         <!-- <div class="post-row"> -->
         <div class="post-cell"> Title: {{ post.title }}</div>
         <div class="post-cell"> modified: {{ post.modified }}</div>
         <div class="action-cell">

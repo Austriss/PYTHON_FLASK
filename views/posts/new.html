@@ -14,6 +14,14 @@
             <label>
                 <textarea name="post_body"> {{ post.body if post else '' }} </textarea>
             </label>
+            <label>Page parent</label>
+            <select name="parent_post_id">
+
+                {% for item in post_parent_id_by_title %}
+                    <option value="{{ item[0] }}" {% if post.parent_post_id == item[0] %} selected="true" {% endif %}>{{ item[1] }}</option>
+                {% endfor %}
+
+            </select>
 
             <input type="submit" value="Save" />
         </form>

@@ -1,4 +1,4 @@
-{% extends "posts/base.html" %}
+{% extends "layouts/base.html" %}
 
 {% block title %}{{ post.title }}{% endblock %}
 
@@ -7,12 +7,12 @@
         <p>
             {{ post.body }}
         </p>
-        <form action="{{ url_for('posts.post_delete') }}" method="POST">
+        <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
             <input type="hidden" value="delete" name="button_type" />
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />
             <input type="submit" value="Delete" name="delete_post"/>
             </form>
-        <form action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">
+        <form action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="GET">
             <input type="hidden" value="edit" name="button_type" />
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />
             <input type="submit" value="Edit" name="edit_post" />

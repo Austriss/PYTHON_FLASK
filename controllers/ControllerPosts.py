@@ -1,3 +1,4 @@
+
 import flask
 import slugify
 from flask import request, redirect, url_for
@@ -12,11 +13,25 @@ class ControllerPosts:
     @staticmethod
     @blueprint.route("/new", methods=["POST", "GET"])
     @blueprint.route("/edit/<post_id>", methods=["POST","GET"])
-    def post_edit(post_id = None):
+    def post_edit(post_id = 0):
         post = None
         if post_id and request.method == "GET":
             post = ControllerDatabase.get_post(post_id=post_id)
-            return flask.render_template("posts/new.html", post=post)
+
+        posts_flattened = ControllerDatabase.get_posts_flattened(exclude_branch_post_id=post_id)
+        post_parent_id_by_title = [
+            (None, "no parent")
+        ]
+        for current_post in posts_flattened:
+            prefix = ""
+            if current_post.depth > 0:
+                prefix = "".join(["-"] * current_post.depth) + " "
+            post_parent_id_by_title.append(
+                (
+                    current_post.post_id,
+                    f"{prefix}{current_post.title}"
+                )
+            )
 
         if request.method == "POST":
             button_type = request.form.get("button_type")
@@ -30,7 +45,6 @@ class ControllerPosts:
                 if post_id:
                     ControllerDatabase.delete_post(post_id)
                 return redirect(url_for('posts.list_all_posts') + '/?deleted=1')
-#                return redirect('posts.list_all_posts', '/?deleted=1') # GET
             elif button_type == "edit":
                 if post_id:
                     post = ControllerDatabase.get_post(post_id=post_id)
@@ -41,6 +55,11 @@ class ControllerPosts:
             post.body = request.form.get('post_body', '').strip()
             post.url_slug = slugify.slugify(post.title or '')
 
+            try:
+                post.parent_post_id = int(request.form.get('parent_post_id'))
+            except:
+                post.parent_post_id = None
+
             if post_id is None:  # New post
                 post_id = ControllerDatabase.insert_post(post)
 
@@ -50,9 +69,10 @@ class ControllerPosts:
 
             # postback / redirect after GET => POST => redirect => GET
                 return redirect(url_for('posts.list_all_posts') + '/?edited=1')
-
         return flask.render_template(
-            'posts/new.html', post=post
+            'posts/new.html',
+            post=post,
+            post_parent_id_by_title=post_parent_id_by_title
         )
 
     @staticmethod
@@ -70,13 +90,11 @@ class ControllerPosts:
         if request.method == "POST":
             ControllerDatabase.delete_post(post_id)
             return redirect(url_for('posts.list_all_posts') + '/?deleted=1')
-        # return flask.render_template(             return 404.html
-        #     'posts/new.html',
-        # )
+
     @staticmethod
     @blueprint.route("/")
     def list_all_posts():
-        posts = ControllerDatabase.get_posts()
+        posts = ControllerDatabase.get_posts_flattened()
         params_GET = flask.request.args
         message = ''
         if params_GET.get('deleted'):
