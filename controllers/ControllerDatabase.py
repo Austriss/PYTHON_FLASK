@@ -1,6 +1,7 @@
 from threading import current_thread
 
 from models.ModelPost import ModelPost
+from models.ModelTag import ModelTag
 import sqlite3
 
 from utils.UtilDatabaseCursor import UtilDatabaseCursor
@@ -14,11 +15,21 @@ class ControllerDatabase:
         try:
             with UtilDatabaseCursor() as cursor:
                 cursor.execute(
-                    'INSERT INTO posts (title, body, url_slug, parent_post_id)'
-                    'VALUES (:title, :body, :url_slug, :parent_post_id);',
+                    'INSERT INTO posts (title, body, url_slug, parent_post_id, thumbnail_uuid)'
+                    'VALUES (:title, :body, :url_slug, :parent_post_id, :thumbnail_uuid);',
                     post.__dict__ #contains post.body, body.title
                 )
                 post_id, = cursor.execute('SELECT last_insert_rowid()').fetchone()
+
+                for tag in post.all_tags:
+                    cursor.execute(
+                        'INSERT INTO tags_in_post (tag_id, post_id)'
+                        'VALUES (:tag_id, :post_id);',
+                        {
+                            'tag_id': tag.tag_id,
+                            'post_id': post.post_id,
+                        }
+                    )
         except Exception as exc:
             print(exc)
         return post_id
@@ -26,6 +37,8 @@ class ControllerDatabase:
     @staticmethod
     def update_post(post_id: int, post: ModelPost):
         try:
+            post_before = ControllerDatabase.get_post(post_id=post.post_id)
+
             with UtilDatabaseCursor() as cursor:
                 cursor.execute(
                     "UPDATE posts SET title = :title,"
@@ -33,8 +46,31 @@ class ControllerDatabase:
                     " url_slug = :url_slug,"
                     " parent_post_id = :parent_post_id "
                     "WHERE post_id = :post_id;",
-                     {**post.__dict__, 'post_id': post_id}
-                               )
+                    post.__dict__
+                    )
+                tags_before_ids = [tag.tag_id for tag in post_before.all_tags]
+                tags_after_ids = [tag.tag_id for tag in post.all_tags]
+
+                tags_to_remove_ids = [tag_id for tag_id in tags_before_ids if tag_id not in tags_after_ids]
+                for tag_id in tags_to_remove_ids:
+                    cursor.execute(
+                        "UPDATE tags_in_post SET is_deleted = TRUE "
+                        "WHERE post_id = :post_id and tag_id = :tag_id;",
+                        {
+                            'post_id': post.post_id,
+                            'tag_id': tag_id,
+                        }
+                    )
+                tags_to_add_ids = [tag_id for tag_id in tags_after_ids if tag_id not in tags_before_ids]
+                for tag_id in tags_to_add_ids:
+                    cursor.execute(
+                        'INSERT INTO tags_in_post (tag_id, post_id)'
+                        'VALUES (:tag_id, :post_id);',
+                        {
+                        'tag_id': tag_id,
+                        'post_id': post.post_id,
+                        }
+                    )
         except Exception as exc:
             print(exc)
 
@@ -56,7 +92,8 @@ class ControllerDatabase:
                 if query.rowcount:
                     col = query.fetchone()
                     post = ModelPost()
-                    (post.post_id,
+                    (
+                     post.post_id,
                      post.title,
                      post.body,
                      post.created,
@@ -64,9 +101,25 @@ class ControllerDatabase:
                      post.status,
                      post.thumbnail_uuid,
                      post.url_slug,
-                     post.parent_post_id) = col
-                # if post.parent_post_id:
-                #     post.parent_post = ControllerDatabase.get_post(post_id=post.parent_post_id)
+                     post.parent_post_id
+                    ) = col
+
+                    query = cursor.execute(
+                        'SELECT tags.* FROM tags '
+                        'INNER JOIN tags_in_post tip ON tags.tag_id = tip.tag_id AND NOT tip.is_deleted '
+                        'WHERE tip.post_id = ? AND NOT tags.is_deleted',
+                        [post.post_id]
+                    )
+                    for (
+                            tag_id,
+                            label,
+                            is_deleted
+                    ) in query.fetchall():
+                        tag = ModelTag()
+                        tag.tag_id = tag_id
+                        tag.label = label
+                        tag.is_deleted = is_deleted
+                        post.all_tags.append(tag)
 
                 post.children_posts = ControllerDatabase.get_posts(parent_post_id=post.post_id)
 
@@ -81,7 +134,7 @@ class ControllerDatabase:
             with UtilDatabaseCursor() as cursor:
 
                 cursor.execute(
-                    'DELETE FROM posts WHERE post_id = :post_id;', # = ?;
+                    'DELETE FROM posts WHERE post_id = :post_id;',
                     {'post_id': post_id} # [post_id]
                 )
                 is_success = True
@@ -129,3 +182,88 @@ class ControllerDatabase:
         except Exception as exc:
             print(exc)
         return posts_flattened
+
+    @staticmethod
+    def get_posts_flattened_recursion(
+            parent_post_id = None,
+            exclude_branch_post_id = None,
+            current_depth = 0,
+            posts_flattened = None
+            ):
+        if posts_flattened is None:
+            posts_flattened = []
+
+        try:
+            post_hierarchy = ControllerDatabase.get_posts(parent_post_id)
+            for current_post in post_hierarchy:
+                if current_post.post_id == exclude_branch_post_id:
+                    continue
+
+                current_post.depth = current_depth
+
+                if current_post.parent_post_id and posts_flattened:
+                    post_parent = next((it for it in posts_flattened if it.post_id == current_post.parent_post_id), None)
+                    if post_parent:
+                        current_post.depth += post_parent.depth
+                posts_flattened.append(current_post)
+
+                ControllerDatabase.get_posts_flattened_recursion(parent_post_id=current_post.post_id,
+                    exclude_branch_post_id=exclude_branch_post_id,
+                    current_depth=current_depth + 1,
+                    posts_flattened=posts_flattened)
+
+
+        except Exception as exc:
+            print(exc)
+        return posts_flattened
+
+    @staticmethod
+    def get_all_tags() -> list[ModelTag]:
+        tags = []
+        try:
+            with UtilDatabaseCursor() as cursor:
+                query = cursor.execute(
+                    'SELECT * FROM tags WHERE is_deleted = 0;'
+                )
+                for (
+                    tag_id,
+                    label,
+                    is_deleted
+                    ) in query.fetchall():
+                    tag = ModelTag()
+                    tag.tag_id = tag_id
+                    tag.label = label
+                    tag.is_deleted = is_deleted
+                    tags.append(tag)
+        except Exception as exc:
+            print(exc)
+        return tags
+
+    @staticmethod
+    def get_post_tags(post_id = None) -> list[ModelTag]:
+        tags = []
+        try:
+            with UtilDatabaseCursor() as cursor:
+                if post_id:
+                    query = cursor.execute(
+                        'SELECT tags.tag_id, tags.label, tags.is_deleted FROM tags '
+                        'INNER JOIN tags_in_post ON tags.tag_id = tags_in_post.tag_id '
+                        'WHERE tags_in_post.post_id = :post_id '
+                        'AND tags_in_post.is_deleted = 0 '
+                        'AND tags.is_deleted = 0',
+                        {'post_id': post_id}
+                    )
+                if query.rowcount:
+                    col = query.fetchall()
+                    tag = ModelTag()
+                    (
+                     tag.tag_id,
+                     tag.label,
+                     tag.is_deleted,
+                     ) = col
+                    tags.append(tag)
+
+            return tags
+
+        except Exception as exc:
+            print(exc)
