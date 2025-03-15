@@ -1,3 +1,6 @@
+import os
+import uuid
+from pathlib import Path
 
 import flask
 import slugify
@@ -15,10 +18,17 @@ class ControllerPosts:
     @blueprint.route("/edit/<post_id>", methods=["POST","GET"])
     def post_edit(post_id = 0):
         post = None
+        post_tag_ids = []
+        all_tags = []
+
         if post_id and request.method == "GET":
             post = ControllerDatabase.get_post(post_id=post_id)
+            if post:
+                post_tag_ids = [tag.tag_id for tag in post.all_tags]
 
-        posts_flattened = ControllerDatabase.get_posts_flattened(exclude_branch_post_id=post_id)
+        all_tags = ControllerDatabase.get_all_tags()
+
+        posts_flattened = ControllerDatabase.get_posts_flattened_recursion(exclude_branch_post_id=post_id)
         post_parent_id_by_title = [
             (None, "no parent")
         ]
@@ -44,16 +54,38 @@ class ControllerPosts:
             if button_type == "delete":
                 if post_id:
                     ControllerDatabase.delete_post(post_id)
-                return redirect(url_for('posts.list_all_posts') + '/?deleted=1')
+                return redirect(url_for('posts.list_all_posts') + '/?deleted=1') #many returns not ok
             elif button_type == "edit":
                 if post_id:
                     post = ControllerDatabase.get_post(post_id=post_id)
-                    return flask.render_template("posts/new.html", post=post)
+                    return flask.render_template(
+                        "posts/new.html",
+                        post=post,
+                        post_tag_ids=post_tag_ids,
+                        all_tags=all_tags,
+                        post_parent_id_by_title=post_parent_id_by_title
+                    )
 
             post = ModelPost()
             post.title = request.form.get('post_title', '').strip()
             post.body = request.form.get('post_body', '').strip()
             post.url_slug = slugify.slugify(post.title or '')
+
+            post_tag_ids = request.form.getlist("post_tag_ids[]", type=int)
+            post.all_tags = [tag for tag in all_tags if tag.tag_id in post_tag_ids]
+
+            fp = request.files['file_thumbnail']
+            if fp:
+                filename = fp.filename.lower()
+                extension = Path(filename).suffix #pathlib
+                if extension in ['.png', '.jpg', '.jpeg']:
+                    filename_uuid = str(uuid.uuid4()) + extension
+                    path_thumbnails = './static/thumbnails/'
+                    if not os.path.exists(path_thumbnails):
+                        os.path.exists(path_thumbnails)
+                        os.makedirs(path_thumbnails)
+                    fp.save(f'{path_thumbnails}/{filename_uuid}')
+                    post.thumbnail_uuid = filename_uuid
 
             try:
                 post.parent_post_id = int(request.form.get('parent_post_id'))
@@ -68,7 +100,7 @@ class ControllerPosts:
                 ControllerDatabase.update_post(post_id=post_id, post=post)
 
             # postback / redirect after GET => POST => redirect => GET
-                return redirect(url_for('posts.list_all_posts') + '/?edited=1')
+            return redirect(url_for('posts.list_all_posts') + '/?edited=1')
         return flask.render_template(
             'posts/new.html',
             post=post,
@@ -94,7 +126,7 @@ class ControllerPosts:
     @staticmethod
     @blueprint.route("/")
     def list_all_posts():
-        posts = ControllerDatabase.get_posts_flattened()
+        posts = ControllerDatabase.get_posts_flattened_recursion()
         params_GET = flask.request.args
         message = ''
         if params_GET.get('deleted'):
