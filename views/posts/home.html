@@ -29,5 +29,5 @@
     {% if message|length > 0 %}
         <div class="post-action-message"> {{ message }}</div>
     {% endif %}
-
+    <a class="button" href="{{ url_for('posts.post_edit') }}"> New post </a>
 {% endblock %}
