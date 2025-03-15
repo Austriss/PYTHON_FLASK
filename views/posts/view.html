@@ -3,6 +3,8 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
+        <img width="200px" src="{{ url_for('static', filename='thumbnails/' + post.thumbnail_uuid) }}" />
+
         <h1> {{ post.title }} </h1>
         <p>
             {{ post.body }}
