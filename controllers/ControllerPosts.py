@@ -19,15 +19,15 @@ class ControllerPosts:
     def post_edit(post_id = 0):
         post = None
         post_tag_ids = []
-        all_tags = []
+        existing_thumbnail_uuid = None
+        #all_tags = []
 
         if post_id and request.method == "GET":
             post = ControllerDatabase.get_post(post_id=post_id)
             if post:
                 post_tag_ids = [tag.tag_id for tag in post.all_tags]
-
+                existing_thumbnail_uuid = post.thumbnail_uuid
         all_tags = ControllerDatabase.get_all_tags()
-
         posts_flattened = ControllerDatabase.get_posts_flattened_recursion(exclude_branch_post_id=post_id)
         post_parent_id_by_title = [
             (None, "no parent")
@@ -75,17 +75,31 @@ class ControllerPosts:
             post.all_tags = [tag for tag in all_tags if tag.tag_id in post_tag_ids]
 
             fp = request.files['file_thumbnail']
-            if fp:
+            if fp and fp.filename:
                 filename = fp.filename.lower()
                 extension = Path(filename).suffix #pathlib
                 if extension in ['.png', '.jpg', '.jpeg']:
                     filename_uuid = str(uuid.uuid4()) + extension
                     path_thumbnails = './static/thumbnails/'
                     if not os.path.exists(path_thumbnails):
-                        os.path.exists(path_thumbnails)
+   #                     os.path.exists(path_thumbnails)
                         os.makedirs(path_thumbnails)
+                        #delete existing thumbnail if edit thumbnail
+                    if post_id:
+                        existing_post = ControllerDatabase.get_post(post_id=post_id)
+                        if existing_post and existing_post.thumbnail_uuid:
+                            old_thumbnail_path = Path(path_thumbnails) / existing_post.thumbnail_uuid
+                            if os.path.exists(old_thumbnail_path):
+                                try:
+                                    os.remove(old_thumbnail_path)
+                                except Exception as exc:
+                                    print(exc)
                     fp.save(f'{path_thumbnails}/{filename_uuid}')
                     post.thumbnail_uuid = filename_uuid
+            elif post_id: #editing existing post without editing thumnail
+                existing_post = ControllerDatabase.get_post(post_id=post_id)
+                if existing_post:
+                    post.thumbnail_uuid = existing_post.thumbnail_uuid
 
             try:
                 post.parent_post_id = int(request.form.get('parent_post_id'))
@@ -106,13 +120,16 @@ class ControllerPosts:
             post=post,
             post_tag_ids=post_tag_ids,
             all_tags=all_tags,
-            post_parent_id_by_title=post_parent_id_by_title
+            post_parent_id_by_title=post_parent_id_by_title,
+            existing_thumbnail_uuid = existing_thumbnail_uuid
         )
 
     @staticmethod
     @blueprint.route("/view/<url_slug>", methods=["GET"])
     def post_view(url_slug: str):
         post = ControllerDatabase.get_post(url_slug=url_slug)
+        print(f"Post: {post}")
+        print(f"Tags: {post.all_tags if post else 'No post found'}")
         return flask.render_template(
             'posts/view.html',
             post=post
