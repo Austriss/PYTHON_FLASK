@@ -1,6 +1,7 @@
 import dataclasses
 
 from models.EnumPostStatus import EnumPostStatus
+from models.ModelTag import ModelTag
 
 
 @dataclasses.dataclass
@@ -15,7 +16,6 @@ class ModelPost:
     status: EnumPostStatus = EnumPostStatus.not_set # ALT + ENTER
 
     parent_post_id: int = None
-    children_posts = []
+    children_posts: list = dataclasses.field(default_factory=list)
     depth: int = 0
-
-    all_tags = []
+    all_tags: list[ModelTag] = dataclasses.field(default_factory=list)

@@ -25,10 +25,10 @@
                 {% endfor %}
             </select>
 
-            <label>TAgs</label>
-            <div>
+            <label class="tags-title">TAgs</label>
+            <div class="tags">
                 {% for tag in all_tags %}
-                <div>
+                <div class="each-tag">
                     <input type="checkbox" name="post_tag_ids[]" value="{{ tag.tag_id }}"
                    {% if tag.tag_id in post_tag_ids %}
                     checked
@@ -38,6 +38,11 @@
                 </div>
                 {% endfor %}
             </div>
+
+            {% if post and post.thumbnail_uuid %}
+            <div> current thumbnail: </div>
+            <img width="250px" src="{{ url_for('static', filename='thumbnails/' + post.thumbnail_uuid) }}" />
+            {% endif %}
             <label> Thumbnail file </label>
             <input type="file" name="file_thumbnail">
 

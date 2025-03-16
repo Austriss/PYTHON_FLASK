@@ -9,6 +9,12 @@
         <p>
             {{ post.body }}
         </p>
+
+            <span class="tags"> posts tags </span> <br>
+            {% for tag in post.all_tags %}
+            <span> {{ tag.label }} </span>
+            <div class="each-tag"></div>
+            {% endfor %}
         <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
             <input type="hidden" value="delete" name="button_type" />
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />

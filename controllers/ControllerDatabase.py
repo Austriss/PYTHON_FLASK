@@ -1,5 +1,3 @@
-from threading import current_thread
-
 from models.ModelPost import ModelPost
 from models.ModelTag import ModelTag
 import sqlite3
@@ -27,7 +25,7 @@ class ControllerDatabase:
                         'VALUES (:tag_id, :post_id);',
                         {
                             'tag_id': tag.tag_id,
-                            'post_id': post.post_id,
+                            'post_id': post_id,
                         }
                     )
         except Exception as exc:
@@ -44,10 +42,11 @@ class ControllerDatabase:
                     "UPDATE posts SET title = :title,"
                     " body = :body,"
                     " url_slug = :url_slug,"
-                    " parent_post_id = :parent_post_id "
+                    " parent_post_id = :parent_post_id,"
+                    " thumbnail_uuid = :thumbnail_uuid "
                     "WHERE post_id = :post_id;",
                     post.__dict__
-                    )
+                )
                 tags_before_ids = [tag.tag_id for tag in post_before.all_tags]
                 tags_after_ids = [tag.tag_id for tag in post.all_tags]
 
@@ -57,7 +56,7 @@ class ControllerDatabase:
                         "UPDATE tags_in_post SET is_deleted = TRUE "
                         "WHERE post_id = :post_id and tag_id = :tag_id;",
                         {
-                            'post_id': post.post_id,
+                            'post_id': post_id,
                             'tag_id': tag_id,
                         }
                     )
@@ -68,7 +67,7 @@ class ControllerDatabase:
                         'VALUES (:tag_id, :post_id);',
                         {
                         'tag_id': tag_id,
-                        'post_id': post.post_id,
+                        'post_id': post_id,
                         }
                     )
         except Exception as exc:
@@ -121,7 +120,7 @@ class ControllerDatabase:
                         tag.is_deleted = is_deleted
                         post.all_tags.append(tag)
 
-                post.children_posts = ControllerDatabase.get_posts(parent_post_id=post.post_id)
+                    post.children_posts = ControllerDatabase.get_posts(parent_post_id=post.post_id)
 
         except Exception as exc:
             print(exc)
@@ -148,7 +147,7 @@ class ControllerDatabase:
         try:
             with UtilDatabaseCursor() as cursor:
                 query = cursor.execute(
-                f'SELECT post_id FROM posts WHERE parent_post_id {'=' if parent_post_id else 'IS'} ?',
+                f'SELECT post_id FROM posts WHERE parent_post_id {'=' if parent_post_id is not None else 'IS'} ?',
                 [parent_post_id]
                 )
 
@@ -253,16 +252,12 @@ class ControllerDatabase:
                         'AND tags.is_deleted = 0',
                         {'post_id': post_id}
                     )
-                if query.rowcount:
-                    col = query.fetchall()
+                for (tag_id, label, is_deleted) in query.fetchall():
                     tag = ModelTag()
-                    (
-                     tag.tag_id,
-                     tag.label,
-                     tag.is_deleted,
-                     ) = col
+                    tag.tag_id = tag_id
+                    tag.label = label
+                    tag.is_deleted = is_deleted
                     tags.append(tag)
-
             return tags
 
         except Exception as exc:
