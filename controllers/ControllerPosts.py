@@ -171,4 +171,6 @@ class ControllerPosts:
             message = "post deleted"
         elif params_GET.get('edited'):
             message = "post edited"
+        elif params_GET.get('message'):
+            message = params_GET.get('message')
         return flask.render_template('posts/home.html', posts=posts, message=message)

@@ -1,7 +1,9 @@
 from models.ModelAttachment import ModelAttachment
 from models.ModelPost import ModelPost
 from models.ModelTag import ModelTag
+from models.ModelUser import ModelUser
 import sqlite3
+import bcrypt
 
 from utils.UtilDatabaseCursor import UtilDatabaseCursor
 
@@ -302,3 +304,25 @@ class ControllerDatabase:
 
         except Exception as exc:
             print(exc)
+
+    @staticmethod
+    def password_and_email_check(input_email:str, input_password: bytes) -> bool:
+        is_logged_in = False
+        try:
+            with UtilDatabaseCursor() as cursor:
+                cursor.execute(
+                    'SELECT * FROM users WHERE email = :email;',
+ #                   'SELECT password_hash FROM users WHERE email = :email;',
+                    {'email': input_email}
+                )
+                result = cursor.fetchone()
+                if result:
+                    user_id, email, database_password_hash = result
+                    database_password_hash_to_bytes = database_password_hash.encode('utf-8')
+
+                    if bcrypt.checkpw(input_password, database_password_hash_to_bytes):
+                        is_logged_in = True
+
+        except Exception as exc:
+            print(exc)
+        return is_logged_in
