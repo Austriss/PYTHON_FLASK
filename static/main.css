@@ -56,12 +56,34 @@ table {
     margin: 0 auto;
     max-width: 800px;
 }
-/*.post-row {*/
-/*    border-bottom: 1px;*/
-/*    border-bottom-color: black;*/
-/*    border-style: solid;*/
-/*}*/
 
-.header-row {
+.button {
+    padding-top: 20px;
+    justify-content: center;
+    display: flex;
+    font-size: 25px;
+}
+form .tags,
+form .tag_pair {
+    clear: both;
+}
 
+form .tags {
+    margin-bottom: 20px;
+}
+
+form .tag_pair > *{
+    float: left;
+    display: block;
+    margin: 0;
+    line-height: 20px;
+}
+
+form .tag_pair input {
+    margin-right: 5px;
+    margin-top: 5px;
+}
+.tags-title {
+    padding-top: 10px;
+    padding-left: 70px;
 }
