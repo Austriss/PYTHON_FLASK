@@ -1,3 +1,4 @@
+from models.ModelAttachment import ModelAttachment
 from models.ModelPost import ModelPost
 from models.ModelTag import ModelTag
 import sqlite3
@@ -25,6 +26,15 @@ class ControllerDatabase:
                         'VALUES (:tag_id, :post_id);',
                         {
                             'tag_id': tag.tag_id,
+                            'post_id': post_id,
+                        }
+                    )
+                for attachment in post.attachments:
+                    cursor.execute(
+                        'INSERT INTO attachments (attachment_uuid, post_id)'
+                        'VALUES (:attachment_uuid, :post_id);',
+                        {
+                            'attachment_uuid': attachment.attachment_uuid,
                             'post_id': post_id,
                         }
                     )
@@ -70,6 +80,18 @@ class ControllerDatabase:
                         'post_id': post_id,
                         }
                     )
+
+                for attachment in post.attachments:
+                    cursor.execute(
+                        'INSERT INTO attachments (attachment_uuid, post_id)'
+                        'VALUES (:attachment_uuid, :post_id);',
+                        {
+                            'attachment_uuid': attachment.attachment_uuid,
+                            'post_id': post_id,
+                        }
+                    )
+
+
         except Exception as exc:
             print(exc)
 
@@ -119,6 +141,24 @@ class ControllerDatabase:
                         tag.label = label
                         tag.is_deleted = is_deleted
                         post.all_tags.append(tag)
+
+                    attachment_query = cursor.execute(
+                        'SELECT attachments.* FROM attachments '
+                        'WHERE attachments.post_id = ?'
+                        [post.post_id]
+                    )
+                    for (
+                            attachment_id,
+                            post_id,
+                            attachment_uuid,
+                            is_deleted,
+                    ) in attachment_query.fetchall():
+                        attachment = ModelAttachment()
+                        attachment.attachment_id = attachment_id
+                        attachment.post_id = post_id
+                        attachment.attachment_uuid = attachment_uuid
+                        attachment.is_deleted = is_deleted
+                        post.attachments.append(attachment)
 
                     post.children_posts = ControllerDatabase.get_posts(parent_post_id=post.post_id)
 

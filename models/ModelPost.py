@@ -2,6 +2,7 @@ import dataclasses
 
 from models.EnumPostStatus import EnumPostStatus
 from models.ModelTag import ModelTag
+from models.ModelAttachment import ModelAttachment
 
 
 @dataclasses.dataclass
@@ -18,4 +19,6 @@ class ModelPost:
     parent_post_id: int = None
     children_posts: list = dataclasses.field(default_factory=list)
     depth: int = 0
+
     all_tags: list[ModelTag] = dataclasses.field(default_factory=list)
+    attachments: list[ModelAttachment] = dataclasses.field(default_factory=list)

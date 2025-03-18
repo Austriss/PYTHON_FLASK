@@ -29,12 +29,12 @@
             <div class="tags">
                 {% for tag in all_tags %}
                 <div class="each-tag">
+                    <span> {{ tag.label }} </span>
                     <input type="checkbox" name="post_tag_ids[]" value="{{ tag.tag_id }}"
                    {% if tag.tag_id in post_tag_ids %}
                     checked
                    {% endif %}
-                   >
-                    <span> {{ tag.label }} </span>
+
                 </div>
                 {% endfor %}
             </div>
@@ -46,6 +46,8 @@
             <label> Thumbnail file </label>
             <input type="file" name="file_thumbnail">
 
+            <label> PDF files </label>
+            <input type="file" name="file_pdf" multiple>
             <input type="submit" value="Save" />
         </form>
 {% endblock %}

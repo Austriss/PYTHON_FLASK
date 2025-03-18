@@ -7,6 +7,7 @@ import slugify
 from flask import request, redirect, url_for
 
 from controllers.ControllerDatabase import ControllerDatabase
+from models.ModelAttachment import ModelAttachment
 from models.ModelPost import ModelPost
 
 
@@ -17,10 +18,9 @@ class ControllerPosts:
     @blueprint.route("/new", methods=["POST", "GET"])
     @blueprint.route("/edit/<post_id>", methods=["POST","GET"])
     def post_edit(post_id = 0):
-        post = None
+        post = ModelPost()
         post_tag_ids = []
         existing_thumbnail_uuid = None
-        #all_tags = []
 
         if post_id and request.method == "GET":
             post = ControllerDatabase.get_post(post_id=post_id)
@@ -66,7 +66,6 @@ class ControllerPosts:
                         post_parent_id_by_title=post_parent_id_by_title
                     )
 
-            post = ModelPost()
             post.title = request.form.get('post_title', '').strip()
             post.body = request.form.get('post_body', '').strip()
             post.url_slug = slugify.slugify(post.title or '')
@@ -96,10 +95,30 @@ class ControllerPosts:
                                     print(exc)
                     fp.save(f'{path_thumbnails}/{filename_uuid}')
                     post.thumbnail_uuid = filename_uuid
+
             elif post_id: #editing existing post without editing thumnail
                 existing_post = ControllerDatabase.get_post(post_id=post_id)
                 if existing_post:
                     post.thumbnail_uuid = existing_post.thumbnail_uuid
+
+            fp = request.files['file_pdf']
+         #   attachments = post.attachments
+            if fp and fp.filename:
+                filename = fp.filename.lower()
+                extension = Path(filename).suffix
+                if extension == '.pdf':
+                    filename_uuid = str(uuid.uuid4()) + extension
+                    path_pdf = './static/pdfs/'
+                    attachment = ModelAttachment()
+                    attachment.attachment_uuid = filename_uuid
+                    attachment.post_id = post_id
+                    post.attachments.append(attachment)
+                    if not os.path.exists(path_pdf):
+                        os.makedirs(path_pdf)
+                    fp.save(f'{path_pdf}/{filename_uuid}')
+               #     attachments.append(f'{path_pdf}/{filename_uuid}')
+
+
 
             try:
                 post.parent_post_id = int(request.form.get('parent_post_id'))
@@ -128,8 +147,6 @@ class ControllerPosts:
     @blueprint.route("/view/<url_slug>", methods=["GET"])
     def post_view(url_slug: str):
         post = ControllerDatabase.get_post(url_slug=url_slug)
-        print(f"Post: {post}")
-        print(f"Tags: {post.all_tags if post else 'No post found'}")
         return flask.render_template(
             'posts/view.html',
             post=post

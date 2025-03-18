@@ -15,6 +15,17 @@
             <span> {{ tag.label }} </span>
             <div class="each-tag"></div>
             {% endfor %}
+            <span> PDF files</span>
+            {% if post.attachments %}
+                {% for attachment in post.attachments %}
+                    <a href="{{ url_for('static', filename='pdfs/' + attachment.attachment_uuid) }}" target="_blank">
+                        {{ attachment.attachment_uuid }}
+                    </a>
+                {% endfor %}
+            {% else %}
+                Debug (template): post.attachments IS empty!
+                <a> No pdfs uploaded</a>
+            {% endif %}
         <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
             <input type="hidden" value="delete" name="button_type" />
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />
