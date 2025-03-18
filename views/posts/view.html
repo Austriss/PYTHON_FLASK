@@ -3,19 +3,19 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-        <img width="200px" src="{{ url_for('static', filename='thumbnails/' + post.thumbnail_uuid) }}" />
+        <img width="250px" src="{{ url_for('static', filename='thumbnails/' + post.thumbnail_uuid) }}" />
 
         <h1> {{ post.title }} </h1>
         <p>
             {{ post.body }}
         </p>
 
-            <span class="tags"> posts tags </span> <br>
+            <span class="tags"> posts tags: </span> <br>
             {% for tag in post.all_tags %}
-            <span> {{ tag.label }} </span>
+            <span class="tag_label"> {{ tag.label }} </span>
             <div class="each-tag"></div>
             {% endfor %}
-            <span> PDF files</span>
+            <span class="attachment"> PDF files: </span>
             {% if post.attachments %}
                 {% for attachment in post.attachments %}
                     <a href="{{ url_for('static', filename='pdfs/' + attachment.attachment_uuid) }}" target="_blank">
@@ -23,8 +23,7 @@
                     </a>
                 {% endfor %}
             {% else %}
-                Debug (template): post.attachments IS empty!
-                <a> No pdfs uploaded</a>
+                <a> no pdfs uploaded</a>
             {% endif %}
         <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
             <input type="hidden" value="delete" name="button_type" />

@@ -87,3 +87,11 @@ form .tag_pair input {
     padding-top: 10px;
     padding-left: 70px;
 }
+.tag_label {
+    border-style: solid;
+    border-width: 1px;
+
+}
+.attachment {
+    padding-top: 50px;
+}

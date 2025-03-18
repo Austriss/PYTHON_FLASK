@@ -18,15 +18,15 @@ class ControllerPosts:
     @blueprint.route("/new", methods=["POST", "GET"])
     @blueprint.route("/edit/<post_id>", methods=["POST","GET"])
     def post_edit(post_id = 0):
-        post = ModelPost()
+        post = None
         post_tag_ids = []
-        existing_thumbnail_uuid = None
+        thumbnail_uuid = None
 
         if post_id and request.method == "GET":
             post = ControllerDatabase.get_post(post_id=post_id)
             if post:
                 post_tag_ids = [tag.tag_id for tag in post.all_tags]
-                existing_thumbnail_uuid = post.thumbnail_uuid
+                thumbnail_uuid = post.thumbnail_uuid
         all_tags = ControllerDatabase.get_all_tags()
         posts_flattened = ControllerDatabase.get_posts_flattened_recursion(exclude_branch_post_id=post_id)
         post_parent_id_by_title = [
@@ -65,13 +65,14 @@ class ControllerPosts:
                         all_tags=all_tags,
                         post_parent_id_by_title=post_parent_id_by_title
                     )
-
+            post = ModelPost()
             post.title = request.form.get('post_title', '').strip()
             post.body = request.form.get('post_body', '').strip()
             post.url_slug = slugify.slugify(post.title or '')
 
             post_tag_ids = request.form.getlist("post_tag_ids[]", type=int)
             post.all_tags = [tag for tag in all_tags if tag.tag_id in post_tag_ids]
+            print(post.all_tags)
 
             fp = request.files['file_thumbnail']
             if fp and fp.filename:
@@ -116,7 +117,8 @@ class ControllerPosts:
                     if not os.path.exists(path_pdf):
                         os.makedirs(path_pdf)
                     fp.save(f'{path_pdf}/{filename_uuid}')
-               #     attachments.append(f'{path_pdf}/{filename_uuid}')
+                    post.attachments.append(attachment)
+                    print(post.attachments)
 
 
 

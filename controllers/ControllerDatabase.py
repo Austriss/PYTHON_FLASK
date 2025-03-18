@@ -144,7 +144,7 @@ class ControllerDatabase:
 
                     attachment_query = cursor.execute(
                         'SELECT attachments.* FROM attachments '
-                        'WHERE attachments.post_id = ?'
+                        'WHERE attachments.post_id = ?',
                         [post.post_id]
                     )
                     for (
