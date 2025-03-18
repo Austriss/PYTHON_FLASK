@@ -4,7 +4,7 @@ from pathlib import Path
 
 import flask
 import slugify
-from flask import request, redirect, url_for
+from flask import request, redirect, url_for, session
 
 from controllers.ControllerDatabase import ControllerDatabase
 from models.ModelAttachment import ModelAttachment
@@ -20,13 +20,13 @@ class ControllerPosts:
     def post_edit(post_id = 0):
         post = None
         post_tag_ids = []
-        thumbnail_uuid = None
+        existing_thumbnail_uuid = None
 
         if post_id and request.method == "GET":
             post = ControllerDatabase.get_post(post_id=post_id)
             if post:
                 post_tag_ids = [tag.tag_id for tag in post.all_tags]
-                thumbnail_uuid = post.thumbnail_uuid
+                existing_thumbnail_uuid = post.thumbnail_uuid
         all_tags = ControllerDatabase.get_all_tags()
         posts_flattened = ControllerDatabase.get_posts_flattened_recursion(exclude_branch_post_id=post_id)
         post_parent_id_by_title = [
@@ -55,7 +55,7 @@ class ControllerPosts:
                 if post_id:
                     ControllerDatabase.delete_post(post_id)
                 return redirect(url_for('posts.list_all_posts') + '/?deleted=1') #many returns not ok
-            elif button_type == "edit":
+            elif button_type == "edit" and 'is_logged_in' in session:
                 if post_id:
                     post = ControllerDatabase.get_post(post_id=post_id)
                     return flask.render_template(
@@ -72,7 +72,6 @@ class ControllerPosts:
 
             post_tag_ids = request.form.getlist("post_tag_ids[]", type=int)
             post.all_tags = [tag for tag in all_tags if tag.tag_id in post_tag_ids]
-            print(post.all_tags)
 
             fp = request.files['file_thumbnail']
             if fp and fp.filename:
@@ -173,4 +172,11 @@ class ControllerPosts:
             message = "post edited"
         elif params_GET.get('message'):
             message = params_GET.get('message')
-        return flask.render_template('posts/home.html', posts=posts, message=message)
+
+        is_logged_in = 'is_logged_in' in session
+        return flask.render_template(
+            'posts/home.html',
+            posts=posts,
+            message=message,
+            is_logged_in=is_logged_in,
+            )

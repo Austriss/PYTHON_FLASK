@@ -124,7 +124,8 @@ class ControllerDatabase:
                      post.status,
                      post.thumbnail_uuid,
                      post.url_slug,
-                     post.parent_post_id
+                     post.parent_post_id,
+                     post.is_deleted
                     ) = col
 
                     query = cursor.execute(
@@ -247,7 +248,6 @@ class ControllerDatabase:
                     if post_parent:
                         current_post.depth += post_parent.depth
                 posts_flattened.append(current_post)
-
                 ControllerDatabase.get_posts_flattened_recursion(parent_post_id=current_post.post_id,
                     exclude_branch_post_id=exclude_branch_post_id,
                     current_depth=current_depth + 1,
@@ -306,21 +306,23 @@ class ControllerDatabase:
             print(exc)
 
     @staticmethod
-    def password_and_email_check(input_email:str, input_password: bytes) -> bool:
+    def password_and_email_check(email:str, input_password: bytes) -> bool:
         is_logged_in = False
         try:
             with UtilDatabaseCursor() as cursor:
                 cursor.execute(
-                    'SELECT * FROM users WHERE email = :email;',
- #                   'SELECT password_hash FROM users WHERE email = :email;',
-                    {'email': input_email}
+                    'SELECT user_id, email, password_hash, modified, is_deleted FROM users '
+                    'WHERE email = :email '
+                    'AND NOT is_deleted LIMIT 1;',
+                    {'email': email}
                 )
                 result = cursor.fetchone()
-                if result:
-                    user_id, email, database_password_hash = result
-                    database_password_hash_to_bytes = database_password_hash.encode('utf-8')
 
-                    if bcrypt.checkpw(input_password, database_password_hash_to_bytes):
+                if result:
+                    user_id, email, password_hash, modified, is_deleted = result
+                    password_hash_to_bytes = password_hash.encode('utf-8')
+
+                    if bcrypt.checkpw(input_password, password_hash_to_bytes):
                         is_logged_in = True
 
         except Exception as exc:
