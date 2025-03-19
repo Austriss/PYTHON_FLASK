@@ -4,10 +4,11 @@ from models.ModelTag import ModelTag
 from models.ModelUser import ModelUser
 import sqlite3
 import bcrypt
+from Logger_setup import logger
 
 from utils.UtilDatabaseCursor import UtilDatabaseCursor
 
-
+logger.info('logger from controllerdatabase')
 class ControllerDatabase:
 
     @staticmethod
@@ -41,7 +42,7 @@ class ControllerDatabase:
                         }
                     )
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
         return post_id
 
     @staticmethod
@@ -95,7 +96,7 @@ class ControllerDatabase:
 
 
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
 
     @staticmethod
     def get_post(post_id: int = None, url_slug: str = None) -> ModelPost:
@@ -166,7 +167,7 @@ class ControllerDatabase:
                     post.children_posts = ControllerDatabase.get_posts(parent_post_id=post.post_id)
 
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
         return post
 
     @staticmethod
@@ -181,7 +182,7 @@ class ControllerDatabase:
                 )
                 is_success = True
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
         return is_success
 
     @staticmethod
@@ -198,7 +199,7 @@ class ControllerDatabase:
                     post = ControllerDatabase.get_post(post_id)
                     posts.append(post)
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
         return posts
 
     @staticmethod
@@ -222,7 +223,7 @@ class ControllerDatabase:
                 post_hierarchy = current_post.children_posts + post_hierarchy #concat
                 posts_flattened.append(current_post)
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
         return posts_flattened
 
     @staticmethod
@@ -255,7 +256,7 @@ class ControllerDatabase:
 
 
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
         return posts_flattened
 
     @staticmethod
@@ -277,7 +278,7 @@ class ControllerDatabase:
                     tag.is_deleted = is_deleted
                     tags.append(tag)
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
         return tags
 
     @staticmethod
@@ -303,7 +304,7 @@ class ControllerDatabase:
             return tags
 
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
 
     @staticmethod
     def password_and_email_check(email:str, input_password: bytes) -> bool:
@@ -326,5 +327,5 @@ class ControllerDatabase:
                         is_logged_in = True
 
         except Exception as exc:
-            print(exc)
+            logger.error(exc)
         return is_logged_in

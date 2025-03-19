@@ -1,6 +1,7 @@
 import os
 import uuid
 from pathlib import Path
+from Logger_setup import logger
 
 import flask
 import slugify
@@ -10,7 +11,7 @@ from controllers.ControllerDatabase import ControllerDatabase
 from models.ModelAttachment import ModelAttachment
 from models.ModelPost import ModelPost
 
-
+logger.info("logger from controllerposts")
 class ControllerPosts:
     blueprint = flask.Blueprint("posts", __name__, url_prefix="/posts")
 
@@ -89,10 +90,7 @@ class ControllerPosts:
                         if existing_post and existing_post.thumbnail_uuid:
                             old_thumbnail_path = Path(path_thumbnails) / existing_post.thumbnail_uuid
                             if os.path.exists(old_thumbnail_path):
-                                try:
-                                    os.remove(old_thumbnail_path)
-                                except Exception as exc:
-                                    print(exc)
+                                os.remove(old_thumbnail_path)
                     fp.save(f'{path_thumbnails}/{filename_uuid}')
                     post.thumbnail_uuid = filename_uuid
 
