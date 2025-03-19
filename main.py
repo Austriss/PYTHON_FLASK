@@ -1,20 +1,22 @@
 import datetime
-from operator import truediv
-
-import bcrypt
+import os
 import flask
 from flask import url_for, request, session, redirect
+from flask_session import Session
 
 from controllers.ControllerDatabase import ControllerDatabase
 from controllers.ControllerPosts import ControllerPosts
 from models.ModelUser import ModelUser
 
 app = flask.Flask(__name__, template_folder='views')
+app.config['SESSION_COOKIE_NAME'] = 'session'
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SESSION_FILE_DIR'] = os.path.join(app.root_path, 'static', 'session_files')
+app.config["SESSION_PERMANENT"] = False
+app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
+app.config['SECRET_KEY'] = 'parole'
+Session(app)
 app.register_blueprint(ControllerPosts.blueprint)
-
-app.secret_key = 'parole'
-app.permanent_session_lifetime = datetime.timedelta(days=365)
-
 
 
 @app.route("/", methods=['GET'])
@@ -68,14 +70,13 @@ def login():
     return flask.render_template(
         'login.html',
         message=login_message,
-    )
+        )
 
 @app.route("/logout", methods=['GET'])
 def logout():
     session.pop('is_logged_in')
     session.clear()
     return redirect('/login')
-
 
 app.run(
     host='localhost', # localhost == 127.0.0.1
