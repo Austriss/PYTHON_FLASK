@@ -1,0 +1,132 @@
+$font-family: "Arial";
+$input-border-color: black;
+$input-bottom-margin: 20px;
+$textarea-height: 200px;
+
+$post-action-font-size: 25px;
+$post-action-font-color: red;
+$post-action-margin-top: 10px;
+$post-action-text-align: center;
+
+$header-title-font-size: 30px;
+$header-title-margin: 50px;
+
+$post-table-header-padding: 8px;
+
+$post-cell-padding: 8px;
+
+$action-cell-padding: 8px;
+
+$list-of-posts-background-color: bisque;
+$list-of-posts-max-width: 800px;
+
+$button-padding-top: 20px;
+$button-font-size: 25px;
+
+$tags-margin-bottom: 20px;
+$tag_pair-line-height: 20px;
+$tag_pair-input-margin-right: 5px;
+$tag_pair-input-margin-top: 5px;
+
+$tags-title-padding-top: 10px;
+$tags-title-padding-left: 70px;
+
+$tag_label-border-style: solid;
+$tag_label-border-width: 1px;
+
+$attachment-padding-top: 50px;
+
+html {
+    font-family: $font-family;
+}
+/* cs selectors */
+input, textarea {
+    border: 1px solid $input-border-color;
+    margin-bottom: $input-bottom-margin;
+}
+
+label, input, textarea {
+    display: block;
+}
+
+textarea {
+    height: $textarea-height;
+
+}
+table {
+    margin: 0 auto;
+}
+
+.post-action-message {
+    font-size: $post-action-font-size;
+    color: $post-action-font-color;
+    margin-top: $post-action-margin-top;
+    text-align: $post-action-text-align;
+}
+.header-title {
+    font-size: $header-title-font-size;
+    text-align: center;
+    margin-bottom: $header-title-margin;
+}
+
+.post-table-header {
+    flex: 1;
+    text-align: left;
+    padding: $post-table-header-padding;
+}
+
+.post-cell {
+    padding: $post-cell-padding;
+    text-align: left;
+    flex:1;
+}
+.action-cell {
+    text-align: right;
+    padding: $action-cell-padding;
+}
+.list-of-posts {
+    background-color: $list-of-posts-background-color;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    max-width: $list-of-posts-max-width;
+}
+
+.button {
+    padding-top: $button-padding-top;
+    justify-content: center;
+    display: flex;
+    font-size: $button-font-size;
+}
+form .tags,
+form .tag_pair {
+    clear: both;
+}
+
+form .tags {
+    margin-bottom: $tags-margin-bottom;
+}
+
+form .tag_pair > *{
+    float: left;
+    display: block;
+    margin: 0;
+    line-height: $tag_pair-line-height;
+}
+
+form .tag_pair input {
+    margin-right: $tag_pair-input-margin-right;
+    margin-top: $tag_pair-input-margin-top;
+}
+.tags-title {
+    padding-top: $tags-title-padding-top;
+    padding-left: $tags-title-padding-left;
+}
+.tag_label {
+    border-style: $tag_label-border-style;
+    border-width: $tag_label-border-width;
+
+}
+.attachment {
+    padding-top: $attachment-padding-top;
+}
