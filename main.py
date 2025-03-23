@@ -52,8 +52,8 @@ def login():
     if request.method == 'POST':
         email = request.form.get("email").strip().lower() #austris@email.com
         password = request.form.get("password").strip() #austris
-        password_to_bytes = password.encode('utf-8')
-        is_logged_in = ControllerDatabase.password_and_email_check(email, password_to_bytes)
+        password_encoded = password.encode('utf-8')
+        is_logged_in = ControllerDatabase.password_and_email_check(email, password_encoded)
 
         if is_logged_in:
             session['is_logged_in'] = True
@@ -64,7 +64,9 @@ def login():
             return redirect(url_for(
                 'posts.list_all_posts',
                 message=login_message,
-                is_logged_in=is_logged_in))
+                is_logged_in=is_logged_in
+                )
+            )
         else:
             login_message = 'wrong email or password'
     return flask.render_template(
@@ -79,7 +81,7 @@ def logout():
     return redirect('/login')
 
 app.run(
-    host='localhost', # localhost == 127.0.0.1
-    port=8000, # by default HTTP 80, HTTPS 443 // 8000, 8080
+    host='localhost',
+    port=8000,
     debug=True
 )

@@ -20,7 +20,7 @@ class ControllerDatabase:
                     'INSERT INTO posts (title, body, url_slug, parent_post_id, thumbnail_uuid)'
                     'VALUES (:title, :body, :url_slug, :parent_post_id, :thumbnail_uuid);',
                     post.__dict__ #contains post.body, body.title
-                )
+                    )
                 post_id, = cursor.execute('SELECT last_insert_rowid()').fetchone()
 
                 for tag in post.all_tags:
@@ -40,7 +40,7 @@ class ControllerDatabase:
                             'attachment_uuid': attachment.attachment_uuid,
                             'post_id': post_id,
                         }
-                    )
+                        )
         except Exception as exc:
             logger.error(exc)
         return post_id
@@ -59,7 +59,7 @@ class ControllerDatabase:
                     " thumbnail_uuid = :thumbnail_uuid "
                     "WHERE post_id = :post_id;",
                     post.__dict__
-                )
+                    )
                 tags_before_ids = [tag.tag_id for tag in post_before.all_tags]
                 tags_after_ids = [tag.tag_id for tag in post.all_tags]
 
@@ -72,7 +72,7 @@ class ControllerDatabase:
                             'post_id': post_id,
                             'tag_id': tag_id,
                         }
-                    )
+                        )
                 tags_to_add_ids = [tag_id for tag_id in tags_after_ids if tag_id not in tags_before_ids]
                 for tag_id in tags_to_add_ids:
                     cursor.execute(
@@ -82,7 +82,7 @@ class ControllerDatabase:
                         'tag_id': tag_id,
                         'post_id': post_id,
                         }
-                    )
+                        )
 
                 for attachment in post.attachments:
                     cursor.execute(
@@ -92,7 +92,7 @@ class ControllerDatabase:
                             'attachment_uuid': attachment.attachment_uuid,
                             'post_id': post_id,
                         }
-                    )
+                        )
 
 
         except Exception as exc:
@@ -107,12 +107,12 @@ class ControllerDatabase:
                     query = cursor.execute(
                         'SELECT * FROM posts WHERE post_id = :post_id;',
                         {'post_id': post_id}
-                    )
+                        )
                 elif url_slug:
                     query = cursor.execute(
                         'SELECT * FROM posts WHERE url_slug = :url_slug;',
                         {'url_slug': url_slug}
-                    )
+                        )
                 if query.rowcount:
                     col = query.fetchone()
                     post = ModelPost()
@@ -134,7 +134,7 @@ class ControllerDatabase:
                         'INNER JOIN tags_in_post tip ON tags.tag_id = tip.tag_id AND NOT tip.is_deleted '
                         'WHERE tip.post_id = ? AND NOT tags.is_deleted',
                         [post.post_id]
-                    )
+                        )
                     for (
                             tag_id,
                             label,
@@ -150,7 +150,7 @@ class ControllerDatabase:
                         'SELECT attachments.* FROM attachments '
                         'WHERE attachments.post_id = ?',
                         [post.post_id]
-                    )
+                        )
                     for (
                             attachment_id,
                             post_id,
@@ -179,7 +179,7 @@ class ControllerDatabase:
                 cursor.execute(
                     'DELETE FROM posts WHERE post_id = :post_id;',
                     {'post_id': post_id} # [post_id]
-                )
+                    )
                 is_success = True
         except Exception as exc:
             logger.error(exc)
@@ -220,7 +220,7 @@ class ControllerDatabase:
 
                     current_post.depth += post_parent.depth
 
-                post_hierarchy = current_post.children_posts + post_hierarchy #concat
+                post_hierarchy = current_post.children_posts + post_hierarchy
                 posts_flattened.append(current_post)
         except Exception as exc:
             logger.error(exc)
@@ -266,7 +266,7 @@ class ControllerDatabase:
             with UtilDatabaseCursor() as cursor:
                 query = cursor.execute(
                     'SELECT * FROM tags WHERE is_deleted = 0;'
-                )
+                    )
                 for (
                     tag_id,
                     label,
@@ -294,7 +294,7 @@ class ControllerDatabase:
                         'AND tags_in_post.is_deleted = 0 '
                         'AND tags.is_deleted = 0',
                         {'post_id': post_id}
-                    )
+                        )
                 for (tag_id, label, is_deleted) in query.fetchall():
                     tag = ModelTag()
                     tag.tag_id = tag_id
@@ -316,14 +316,14 @@ class ControllerDatabase:
                     'WHERE email = :email '
                     'AND NOT is_deleted LIMIT 1;',
                     {'email': email}
-                )
+                    )
                 result = cursor.fetchone()
 
                 if result:
                     user_id, email, password_hash, modified, is_deleted = result
-                    password_hash_to_bytes = password_hash.encode('utf-8')
+                    password_hash_encoded = password_hash.encode('utf-8')
 
-                    if bcrypt.checkpw(input_password, password_hash_to_bytes):
+                    if bcrypt.checkpw(input_password, password_hash_encoded):
                         is_logged_in = True
 
         except Exception as exc:

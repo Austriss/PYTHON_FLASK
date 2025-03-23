@@ -14,7 +14,7 @@ class ModelPost:
     thumbnail_uuid: str = ""
     created: int = 0
     modified: int = 0
-    status: EnumPostStatus = EnumPostStatus.not_set # ALT + ENTER
+    status: EnumPostStatus = EnumPostStatus.not_set
 
     parent_post_id: int = None
     children_posts: list = dataclasses.field(default_factory=list)
