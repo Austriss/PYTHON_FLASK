@@ -1,0 +1,157 @@
+# English translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-04-10 12:53+0300\n"
+"PO-Revision-Date: 2025-04-09 16:52+0300\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: controllers/ControllerPosts.py:163 main.py:47
+#, fuzzy
+msgid "post deleted"
+msgstr "post deleted"
+
+#: controllers/ControllerPosts.py:165 main.py:49
+#, fuzzy
+msgid "post edited"
+msgstr "post edited"
+
+#: main.py:72
+msgid "successful login"
+msgstr "successful login"
+
+#: main.py:83
+msgid "wrong email or password"
+msgstr "wrong email or password"
+
+#: views/login.html:3
+msgid "login"
+msgstr "login"
+
+#: views/login.html:12
+msgid "Email"
+msgstr "Email"
+
+#: views/login.html:15
+msgid "Password"
+msgstr "Password"
+
+#: views/login.html:17
+msgid "Login"
+msgstr "Login"
+
+#: views/login.html:21
+msgid "language: "
+msgstr "language: "
+
+#: views/login.html:22
+msgid "English"
+msgstr "English"
+
+#: views/login.html:23
+msgid "Latvian"
+msgstr "Latvian"
+
+#: views/layouts/base.html:4
+#, fuzzy
+msgid "Posts"
+msgstr "Posts"
+
+#: views/posts/home.html:6
+msgid "List of posts"
+msgstr "List of posts"
+
+#: views/posts/home.html:10
+msgid "Title :"
+msgstr "Title: "
+
+#: views/posts/home.html:11
+msgid "modified :"
+msgstr "modified: "
+
+#: views/posts/home.html:16
+msgid "delete"
+msgstr "delete"
+
+#: views/posts/home.html:21 views/posts/view.html:37
+#, fuzzy
+msgid "Edit"
+msgstr "Edit"
+
+#: views/posts/home.html:33 views/posts/new.html:7
+msgid "New post"
+msgstr "New post"
+
+#: views/posts/home.html:35
+msgid "logout"
+msgstr "logout"
+
+#: views/posts/new.html:7
+#, fuzzy
+msgid "Edit post"
+msgstr "Edit post"
+
+#: views/posts/new.html:13
+#, fuzzy
+msgid "title"
+msgstr "Title: "
+
+#: views/posts/new.html:16
+msgid "body"
+msgstr "body"
+
+#: views/posts/new.html:20
+msgid "post parent"
+msgstr "post parent"
+
+#: views/posts/new.html:28
+msgid "Tags"
+msgstr "Tags"
+
+#: views/posts/new.html:43
+msgid "current thumbnail:"
+msgstr "current thumbnail:"
+
+#: views/posts/new.html:46
+msgid "Thumbnail file"
+msgstr "Thumbnail file"
+
+#: views/posts/new.html:49
+msgid "PDF files"
+msgstr "PDF files"
+
+#: views/posts/new.html:51
+msgid "Save"
+msgstr "Save"
+
+#: views/posts/view.html:13
+msgid "posts tags:"
+msgstr "posts tags:"
+
+#: views/posts/view.html:18
+#, fuzzy
+msgid "PDF files:"
+msgstr "PDF files"
+
+#: views/posts/view.html:26
+#, fuzzy
+msgid "no pdfs uploaded"
+msgstr "no PDF`S uploaded"
+
+#: views/posts/view.html:31
+#, fuzzy
+msgid "Delete"
+msgstr "Delete"
+
