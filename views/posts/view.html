@@ -10,12 +10,12 @@
             {{ post.body }}
         </p>
 
-            <span class="tags"> posts tags: </span> <br>
+            <span class="tags"> {{_('posts tags:')}} </span> <br>
             {% for tag in post.all_tags %}
             <span class="tag_label"> {{ tag.label }} </span>
             <div class="each-tag"></div>
             {% endfor %}
-            <span class="attachment"> PDF files: </span>
+            <span class="attachment"> {{_('PDF files:')}} </span>
             {% if post.attachments %}
                 {% for attachment in post.attachments %}
                     <a href="{{ url_for('static', filename='pdfs/' + attachment.attachment_uuid) }}" target="_blank">
@@ -23,16 +23,17 @@
                     </a>
                 {% endfor %}
             {% else %}
-                <a> no pdfs uploaded</a>
+                <a> {{_('no pdfs uploaded')}} </a>
             {% endif %}
         <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
             <input type="hidden" value="delete" name="button_type" />
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />
-            <input type="submit" value="Delete" name="delete_post"/>
+            <input type="submit" value="{{_('Delete')}}" name="delete_post"/>
             </form>
-        <form action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="GET">
+
+        <a href="{{ url_for('posts.post_edit', post_id=post.post_id) }}" >
             <input type="hidden" value="edit" name="button_type" />
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />
-            <input type="submit" value="Edit" name="edit_post" />
-        </form>
+            <input type="submit" value="{{ _('Edit') }}" name="edit_post" />
+        </a>
 {% endblock %}

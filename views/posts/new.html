@@ -1,23 +1,23 @@
 {% extends "layouts/base.html" %}
 
-{% block title %}{% if post %} Editing Post {% else %} New Post {% endif %}{% endblock %}
+{% block title %}{% if post %} {_('Editing Post')} {% else %} {_('New Post')} {% endif %}{% endblock %}
 
 {% block content %}
 
-        <h1> {% if post %} Edit post {% else %} New post {% endif %} </h1>
+        <h1> {% if post %} {{ _('Edit post') }} {% else %} {{ _('New post') }} {% endif %} </h1>
         <form action="{{ url_for('posts.post_edit') }}"
               method="POST"
               enctype="multipart/form-data"
-        >
+              >
             <input type="hidden" name="post_id" value="{{ post.post_id if post else '' }}">
-            <label>title</label>
+            <label>{{_('title')}}</label>
               <input type="text" name="post_title" value="{{ post.title if post else '' }}" />
 
-            <label> body</label>
+            <label> {{_('body')}} </label>
             <label>
                 <textarea name="post_body"> {{ post.body if post else '' }} </textarea>
             </label>
-            <label>post parent</label>
+            <label> {{_('post parent')}}</label>
             <select name="parent_post_id">
 
                 {% for item in post_parent_id_by_title %}
@@ -25,7 +25,7 @@
                 {% endfor %}
             </select>
 
-            <label class="tags-title">Tags</label>
+            <label class="tags-title"> {{_('Tags')}} </label>
             <div class="tags">
                 {% for tag in all_tags %}
                 <div class="each-tag">
@@ -40,14 +40,14 @@
             </div>
 
             {% if post and post.thumbnail_uuid %}
-            <div> current thumbnail: </div>
-            <img width="250px" src="{{ url_for('static', filename='thumbnails/' + post.thumbnail_uuid) }}" />
+            <div> {{_('current thumbnail:')}} </div>
+            <img class="thumbnail" src="{{ url_for('static', filename='thumbnails/' + post.thumbnail_uuid) }}" />
             {% endif %}
-            <label> Thumbnail file </label>
+            <label> {{_('Thumbnail file')}} </label>
             <input type="file" name="file_thumbnail">
 
-            <label> PDF files </label>
+            <label> {{_('PDF files')}} </label>
             <input type="file" name="file_pdf" multiple>
-            <input type="submit" value="Save" />
+            <input type="submit" value={{_("Save")}} />
         </form>
 {% endblock %}

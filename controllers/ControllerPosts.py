@@ -11,6 +11,8 @@ from controllers.ControllerDatabase import ControllerDatabase
 from models.ModelAttachment import ModelAttachment
 from models.ModelPost import ModelPost
 
+from flask_babel import Babel, _
+
 logger.info("logger from controllerposts")
 class ControllerPosts:
     blueprint = flask.Blueprint("posts", __name__, url_prefix="/posts")
@@ -31,7 +33,7 @@ class ControllerPosts:
         all_tags = ControllerDatabase.get_all_tags()
         posts_flattened = ControllerDatabase.get_posts_flattened_recursion(exclude_branch_post_id=post_id)
         post_parent_id_by_title = [
-            (None, "no parent")
+            (None, "_('no parent')")
         ]
         for current_post in posts_flattened:
             prefix = ""
@@ -158,9 +160,9 @@ class ControllerPosts:
         params_GET = flask.request.args
         message = ''
         if params_GET.get('deleted'):
-            message = "post deleted"
+            message = _("post deleted")
         elif params_GET.get('edited'):
-            message = "post edited"
+            message = _("post edited")
         elif params_GET.get('message'):
             message = params_GET.get('message')
 

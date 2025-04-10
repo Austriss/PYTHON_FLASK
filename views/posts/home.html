@@ -1,24 +1,31 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} Posts list {% endblock %}
+{% block title %} posts {% endblock %}
 
 {% block content %}
-<div class="header-title"> List of potsts</div>
+<div class="title-and-language-selector-container" >
+<div class="header-title"> {{ _('List of posts') }} </div>
+    <div class="language-selector">
+        <label> {{ _('language: ') }}</label>
+        <a href="/?lang=en">{{_('English')}}</a>
+        <a href="/?lang=lv">{{_('Latvian')}}</a>
+    </div>
+</div>
 <div class="list-of-posts">
     {% for post in posts %}
     <div style="padding-left: {{ 50 * post.depth }}px">         <!-- <div class="post-row"> -->
-        <div class="post-cell"> Title: {{ post.title }}</div>
-        <div class="post-cell"> modified: {{ post.modified }}</div>
+        <div class="post-cell"> {{ _('Title :') }} {{ post.title }} </div>
+        <div class="post-cell"> {{ _('modified :') }} {{ post.modified }}</div>
         <div class="action-cell">
             {% if is_logged_in %}
             <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
                 <input type="hidden" value="{{ post.post_id }}" name="post_id" />
-                <input type="submit" value="delete" />
+                <input type="submit" value="{{ _('delete') }}" />
             </form>
             <form action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">
                 <input type="hidden" value="edit" name="button_type" />
                 <input type="hidden" value="{{ post.post_id }}" name="post_id" />
-                <input type="submit" value="Edit" name="edit_post" />
+                <input type="submit" value="{{_('Edit')}}" name="edit_post" />
             {% endif %}
             </form>
         </div>
@@ -30,8 +37,8 @@
     {% if message|length > 0 %}
         <div class="post-action-message"> {{ message }}</div>
     {% endif %}
-    <a class="button" href="{{ url_for('posts.post_edit') }}"> New post </a>
+    <a class="button" href="{{ url_for('posts.post_edit') }}"> {{ _('New post') }} </a>
 
-    <a class="button" href="{{ url_for('logout') }}"> logout </a>
+    <a class="button" href="{{ url_for('logout') }}"> {{ _('logout') }} </a>
 
 {% endblock %}

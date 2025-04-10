@@ -1,20 +1,27 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} login {% endblock %}
+{% block title %} {{_('login')}} {% endblock %}
 
 {% block content %}
+
+    <div class="language-selector">
+        <label> {{ _('language: ') }}</label>
+        <a href="/?lang=en">{{_('English')}}</a>
+        <a href="/?lang=lv">{{_('Latvian')}}</a>
+    </div>
 
     {% if message|length > 0 %}
         <div class="post-action-message"> {{ message }}</div>
     {% endif %}
-
+    <div class="login-form">
     <form action="{{ url_for('login') }}" method="POST">
-        <label> Email</label>
+        <label> {{_('Email')}} </label>
         <input type="email" name="email" />
 
-        <label> Password </label>
+        <label> {{_('Password')}} </label>
         <input type="password" name="password" />
-<!-- store passwords in hash256 -->
-        <input type="submit" value="login"/>
+        <input type="submit" value="{{_('Login')}}" />
     </form>
+    </div>
+
 {% endblock %}

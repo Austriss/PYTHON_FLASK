@@ -36,6 +36,12 @@ $tag_label-border-width: 1px;
 
 $attachment-padding-top: 50px;
 
+$thumbnail_jpeg_width: 250px;
+
+$language_selector-gap: 10px;
+$language_selector-right-padding: 20px;
+$language_selector-top-padding: 20px;
+
 html {
     font-family: $font-family;
 }
@@ -43,16 +49,16 @@ html {
 input, textarea {
     border: 1px solid $input-border-color;
     margin-bottom: $input-bottom-margin;
+    display: block;
+}
+textarea {
+    height: $textarea-height;
 }
 
-label, input, textarea {
+label {
     display: block;
 }
 
-textarea {
-    height: $textarea-height;
-
-}
 table {
     margin: 0 auto;
 }
@@ -64,6 +70,7 @@ table {
     text-align: $post-action-text-align;
 }
 .header-title {
+    grid-column: 2;
     font-size: $header-title-font-size;
     text-align: center;
     margin-bottom: $header-title-margin;
@@ -98,26 +105,28 @@ table {
     display: flex;
     font-size: $button-font-size;
 }
-form .tags,
-form .tag_pair {
-    clear: both;
+
+
+form {
+    .tags {
+        margin-bottom: $tags-margin-bottom;
+    }
+    .tags,
+    .tag_pair {
+        clear: both;
+        }
+    .tag_pair > *{
+        float: left;
+        display: block;
+        margin: 0;
+        line-height: $tag_pair-line-height;
+        }
+    .tag_pair input {
+        margin-right: $tag_pair-input-margin-right;
+        margin-top: $tag_pair-input-margin-top;
+        }
 }
 
-form .tags {
-    margin-bottom: $tags-margin-bottom;
-}
-
-form .tag_pair > *{
-    float: left;
-    display: block;
-    margin: 0;
-    line-height: $tag_pair-line-height;
-}
-
-form .tag_pair input {
-    margin-right: $tag_pair-input-margin-right;
-    margin-top: $tag_pair-input-margin-top;
-}
 .tags-title {
     padding-top: $tags-title-padding-top;
     padding-left: $tags-title-padding-left;
@@ -129,4 +138,27 @@ form .tag_pair input {
 }
 .attachment {
     padding-top: $attachment-padding-top;
+}
+
+.thumbnail {
+    width: $thumbnail_jpeg_width;
+}
+
+.login-form {
+    justify-content: center;
+    display: flex;
+}
+
+.language-selector {
+    display: flex;
+    flex-direction: column;
+    grid-column: 3;
+    gap: $language_selector-gap;
+    padding-right: $language_selector-right-padding;
+    padding-top: $language_selector-top-padding;
+}
+
+.title-and-language-selector-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
 }
