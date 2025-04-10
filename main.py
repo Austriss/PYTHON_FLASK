@@ -4,6 +4,8 @@ import flask
 from flask import url_for, request, session, redirect
 from flask_session import Session
 
+from flask_babel import Babel, _
+
 from controllers.ControllerDatabase import ControllerDatabase
 from controllers.ControllerPosts import ControllerPosts
 from models.ModelUser import ModelUser
@@ -15,9 +17,19 @@ app.config['SESSION_FILE_DIR'] = os.path.join(app.root_path, 'static', 'session_
 app.config["SESSION_PERMANENT"] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = datetime.timedelta(days=365)
 app.config['SECRET_KEY'] = 'parole'
+
+app.config['BABEL_DEFAULT_LOCALE'] = 'lv'
+app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations'
+babel = Babel(app)
+
+
 Session(app)
 app.register_blueprint(ControllerPosts.blueprint)
 
+def get_locale(): # hardcoded!!!
+    return request.args.get('lang', 'en')
+
+babel.init_app(app, locale_selector=get_locale)
 
 @app.route("/", methods=['GET'])
 def home():
@@ -32,9 +44,9 @@ def home():
     params_GET = flask.request.args
     message = ''
     if params_GET.get('deleted'):
-        message = "post deleted"
+        message = _("post deleted")
     elif params_GET.get('edited'):
-        message = "post edited"
+        message = _("post edited")
     elif params_GET.get('message'):
         message = params_GET.get('message')
 
@@ -57,7 +69,7 @@ def login():
 
         if is_logged_in:
             session['is_logged_in'] = True
-            login_message = 'successful login'
+            login_message = _('successful login')
             user = ModelUser()
             user.email = email
 
@@ -68,7 +80,7 @@ def login():
                 )
             )
         else:
-            login_message = 'wrong email or password'
+            login_message = _('wrong email or password')
     return flask.render_template(
         'login.html',
         message=login_message,
