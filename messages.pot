@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-10 12:53+0300\n"
+"POT-Creation-Date: 2025-04-12 16:21+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,79 +17,108 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: controllers/ControllerPosts.py:163 main.py:47
+#: controllers/ControllerPosts.py:162 main.py:51
 msgid "post deleted"
 msgstr ""
 
-#: controllers/ControllerPosts.py:165 main.py:49
+#: controllers/ControllerPosts.py:164 main.py:53
 msgid "post edited"
 msgstr ""
 
-#: main.py:72
+#: main.py:76
 msgid "successful login"
 msgstr ""
 
-#: main.py:83
+#: main.py:87
 msgid "wrong email or password"
+msgstr ""
+
+#: static/javascript/edit_tag.jsx:41
+msgid "Editing tag"
+msgstr ""
+
+#: static/javascript/edit_tag.jsx:43 static/javascript/new_tag.jsx:29
+msgid "Label:"
+msgstr ""
+
+#: static/javascript/edit_tag.jsx:53 static/javascript/new_tag.jsx:39
+msgid "Submit"
+msgstr ""
+
+#: static/javascript/new_tag.jsx:27 static/javascript/tags_list.jsx:51
+msgid "New tag"
+msgstr ""
+
+#: static/javascript/tags_list.jsx:39
+msgid "tags list from api"
+msgstr ""
+
+#: static/javascript/tags_list.jsx:44
+msgid "label:"
+msgstr ""
+
+#: static/javascript/tags_list.jsx:45 views/posts/home.html:28
+#: views/posts/view.html:37
+msgid "Edit"
+msgstr ""
+
+#: static/javascript/tags_list.jsx:46 views/posts/view.html:31
+msgid "Delete"
 msgstr ""
 
 #: views/login.html:3
 msgid "login"
 msgstr ""
 
-#: views/login.html:12
-msgid "Email"
-msgstr ""
-
-#: views/login.html:15
-msgid "Password"
-msgstr ""
-
-#: views/login.html:17
-msgid "Login"
-msgstr ""
-
-#: views/login.html:21
+#: views/login.html:8 views/posts/home.html:9
 msgid "language: "
 msgstr ""
 
-#: views/login.html:22
+#: views/login.html:9 views/posts/home.html:10
 msgid "English"
 msgstr ""
 
-#: views/login.html:23
+#: views/login.html:10 views/posts/home.html:11
 msgid "Latvian"
+msgstr ""
+
+#: views/login.html:18
+msgid "Email"
+msgstr ""
+
+#: views/login.html:21
+msgid "Password"
+msgstr ""
+
+#: views/login.html:23
+msgid "Login"
 msgstr ""
 
 #: views/layouts/base.html:4
 msgid "Posts"
 msgstr ""
 
-#: views/posts/home.html:6
+#: views/posts/home.html:7
 msgid "List of posts"
 msgstr ""
 
-#: views/posts/home.html:10
+#: views/posts/home.html:17
 msgid "Title :"
 msgstr ""
 
-#: views/posts/home.html:11
+#: views/posts/home.html:18
 msgid "modified :"
 msgstr ""
 
-#: views/posts/home.html:16
+#: views/posts/home.html:23
 msgid "delete"
 msgstr ""
 
-#: views/posts/home.html:21 views/posts/view.html:37
-msgid "Edit"
-msgstr ""
-
-#: views/posts/home.html:33 views/posts/new.html:7
+#: views/posts/home.html:40 views/posts/new.html:7
 msgid "New post"
 msgstr ""
 
-#: views/posts/home.html:35
+#: views/posts/home.html:42
 msgid "logout"
 msgstr ""
 
@@ -139,9 +168,5 @@ msgstr ""
 
 #: views/posts/view.html:26
 msgid "no pdfs uploaded"
-msgstr ""
-
-#: views/posts/view.html:31
-msgid "Delete"
 msgstr ""
 

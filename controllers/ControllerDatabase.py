@@ -19,7 +19,7 @@ class ControllerDatabase:
                 cursor.execute(
                     'INSERT INTO posts (title, body, url_slug, parent_post_id, thumbnail_uuid)'
                     'VALUES (:title, :body, :url_slug, :parent_post_id, :thumbnail_uuid);',
-                    post.__dict__ #contains post.body, body.title
+                    post.__dict__
                     )
                 post_id, = cursor.execute('SELECT last_insert_rowid()').fetchone()
 
@@ -233,6 +233,7 @@ class ControllerDatabase:
             current_depth = 0,
             posts_flattened = None
             ):
+
         if posts_flattened is None:
             posts_flattened = []
 
@@ -249,10 +250,12 @@ class ControllerDatabase:
                     if post_parent:
                         current_post.depth += post_parent.depth
                 posts_flattened.append(current_post)
-                ControllerDatabase.get_posts_flattened_recursion(parent_post_id=current_post.post_id,
+                ControllerDatabase.get_posts_flattened_recursion(
+                    parent_post_id=current_post.post_id,
                     exclude_branch_post_id=exclude_branch_post_id,
                     current_depth=current_depth + 1,
-                    posts_flattened=posts_flattened)
+                    posts_flattened=posts_flattened
+                    )
 
 
         except Exception as exc:
@@ -307,6 +310,21 @@ class ControllerDatabase:
             logger.error(exc)
 
     @staticmethod
+    def delete_tag(tag_id: int) -> bool:
+        is_success = False
+        try:
+            with UtilDatabaseCursor() as cursor:
+
+                cursor.execute(
+                    'DELETE FROM tags WHERE tag_id = :tag_id;',
+                    {'tag_id': tag_id}
+                    )
+                is_success = True
+        except Exception as exc:
+            logger.error(exc)
+        return is_success
+
+    @staticmethod
     def password_and_email_check(email:str, input_password: bytes) -> bool:
         is_logged_in = False
         try:
@@ -329,3 +347,57 @@ class ControllerDatabase:
         except Exception as exc:
             logger.error(exc)
         return is_logged_in
+
+    @staticmethod
+    def get_tag_from_id(tag_id=None) -> ModelTag:
+        tag = None
+        try:
+            with UtilDatabaseCursor() as cursor:
+                if tag_id:
+                    query = cursor.execute(
+                        'SELECT * FROM tags WHERE tag_id = :tag_id;',
+                        {'tag_id': tag_id}
+                        )
+                if query.rowcount:
+                    col = query.fetchone()
+                    tag = ModelTag()
+                    (
+                    tag.tag_id,
+                    tag.label,
+                    tag.is_deleted
+                    ) = col
+            return tag
+
+        except Exception as exc:
+            logger.error(exc)
+
+
+    @staticmethod
+    def update_tag(tag_id: int, tag=ModelTag) -> bool:
+        success = False
+        try:
+            with UtilDatabaseCursor() as cursor:
+                cursor.execute(
+                    "UPDATE tags SET label = :label "
+                    "WHERE tag_id = :tag_id;",
+                    {'label': tag.label, 'tag_id': tag_id}
+                    )
+                success = True
+        except Exception as exc:
+            logger.error(exc)
+        return success
+
+    @staticmethod
+    def insert_tag(tag: ModelTag) -> int:
+        tag_id = 0
+        try:
+            with UtilDatabaseCursor() as cursor:
+                cursor.execute(
+                    'INSERT INTO tags (label)'
+                    'VALUES (:label);',
+                    tag.__dict__
+                    )
+
+        except Exception as exc:
+            logger.error(exc)
+        return tag_id

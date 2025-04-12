@@ -42,6 +42,17 @@ $language_selector-gap: 10px;
 $language_selector-right-padding: 20px;
 $language_selector-top-padding: 20px;
 
+$tag-table-gap: 10px;
+$tag-table-width: 300px;
+$tag-table-padding: 5px;
+
+$each-tag-row-padding: 15px;
+$each-tag-row-border: 1px solid black;
+
+
+
+
+
 html {
     font-family: $font-family;
 }
@@ -140,7 +151,7 @@ form {
     padding-top: $attachment-padding-top;
 }
 
-.thumbnail {
+.thumbnail, .thumbnail-jpeg {
     width: $thumbnail_jpeg_width;
 }
 
@@ -161,4 +172,31 @@ form {
 .title-and-language-selector-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
+}
+
+.tags-list-title {
+    display: flex;
+    justify-content: center;
+}
+
+.tag-table {
+    display: flex;
+    flex-direction: column;
+    gap: $tag-table-gap;
+    width: $tag-table-width;
+    padding: $tag-table-padding;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.each-tag-row {
+    display: flex;
+    align-items: center;
+    padding: $each-tag-row-padding;
+    border: $each-tag-row-border;
+}
+
+.new-tag-button {
+    margin-top: 40px;
+    text-align: center;
 }

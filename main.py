@@ -2,10 +2,13 @@ import datetime
 import os
 import flask
 from flask import url_for, request, session, redirect
+
 from flask_session import Session
+from flask_cors import CORS
 
 from flask_babel import Babel, _
 
+from controllers.ControllerTags import ControllerTags
 from controllers.ControllerDatabase import ControllerDatabase
 from controllers.ControllerPosts import ControllerPosts
 from models.ModelUser import ModelUser
@@ -21,12 +24,13 @@ app.config['SECRET_KEY'] = 'parole'
 app.config['BABEL_DEFAULT_LOCALE'] = 'lv'
 app.config['BABEL_TRANSLATION_DIRECTORIES'] = 'translations'
 babel = Babel(app)
-
+CORS(app)
 
 Session(app)
 app.register_blueprint(ControllerPosts.blueprint)
+app.register_blueprint(ControllerTags.blueprint)
 
-def get_locale(): # hardcoded!!!
+def get_locale():
     return request.args.get('lang', 'en')
 
 babel.init_app(app, locale_selector=get_locale)
