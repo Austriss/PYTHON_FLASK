@@ -3,9 +3,9 @@ import uuid
 from pathlib import Path
 from Logger_setup import logger
 
-import flask
 import slugify
-from flask import request, redirect, url_for, session
+import flask
+from flask import request, redirect, url_for, session, jsonify
 
 from controllers.ControllerDatabase import ControllerDatabase
 from models.ModelAttachment import ModelAttachment
@@ -149,9 +149,8 @@ class ControllerPosts:
     @staticmethod
     @blueprint.route("/delete/<post_id>", methods=["POST"])
     def post_delete(post_id: int):
-        if request.method == "POST":
-            ControllerDatabase.delete_post(post_id)
-            return redirect(url_for('posts.list_all_posts') + '/?deleted=1')
+        ControllerDatabase.delete_post(post_id)
+        return redirect(url_for('posts.list_all_posts') + '/?deleted=1')
 
     @staticmethod
     @blueprint.route("/")
@@ -173,3 +172,13 @@ class ControllerPosts:
             message=message,
             is_logged_in=is_logged_in,
             )
+
+    @staticmethod
+    @blueprint.route("/tags", methods=["GET"])
+    def list_all_tags():
+        tags = ControllerDatabase.get_all_tags()
+        tags_json = jsonify(tags)
+        return flask.render_template(
+            'posts/tags.html',
+            tags=tags_json
+        )
