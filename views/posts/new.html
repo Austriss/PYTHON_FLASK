@@ -39,15 +39,17 @@
                 {% endfor %}
             </div>
 
-            {% if post and post.thumbnail_uuid %}
-            <div> {{_('current thumbnail:')}} </div>
-            <img class="thumbnail" src="{{ url_for('static', filename='thumbnails/' + post.thumbnail_uuid) }}" />
+            {% if post and post.thumbnail_uuids %}
+            <div> {{_('current thumbnails:')}} </div>
+            {% for thumbnail in post.thumbnail_uuids %}
+            <img class="thumbnail" src="{{ url_for('static', filename='thumbnails/' + thumbnail.image_uuid) }}" />
+            {% endfor %}
             {% endif %}
             <label> {{_('Thumbnail file')}} </label>
-            <input type="file" name="file_thumbnail">
+            <input type="file" name="file_thumbnail" multiple accept="image/png, image/jpeg, image/jpg">
 
             <label> {{_('PDF files')}} </label>
-            <input type="file" name="file_pdf" multiple>
+            <input type="file" name="file_pdf" multiple accept="application/pdf">
             <input type="submit" value={{_("Save")}} />
         </form>
 {% endblock %}

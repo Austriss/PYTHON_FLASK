@@ -1,4 +1,5 @@
 from models.ModelAttachment import ModelAttachment
+from models.ModelImage import ModelImage
 from models.ModelPost import ModelPost
 from models.ModelTag import ModelTag
 from models.ModelUser import ModelUser
@@ -17,8 +18,8 @@ class ControllerDatabase:
         try:
             with UtilDatabaseCursor() as cursor:
                 cursor.execute(
-                    'INSERT INTO posts (title, body, url_slug, parent_post_id, thumbnail_uuid)'
-                    'VALUES (:title, :body, :url_slug, :parent_post_id, :thumbnail_uuid);',
+                    'INSERT INTO posts (title, body, url_slug, parent_post_id)'
+                    'VALUES (:title, :body, :url_slug, :parent_post_id);',
                     post.__dict__
                     )
                 post_id, = cursor.execute('SELECT last_insert_rowid()').fetchone()
@@ -55,8 +56,7 @@ class ControllerDatabase:
                     "UPDATE posts SET title = :title,"
                     " body = :body,"
                     " url_slug = :url_slug,"
-                    " parent_post_id = :parent_post_id,"
-                    " thumbnail_uuid = :thumbnail_uuid "
+                    " parent_post_id = :parent_post_id "
                     "WHERE post_id = :post_id;",
                     post.__dict__
                     )
@@ -94,6 +94,34 @@ class ControllerDatabase:
                         }
                         )
 
+                thumbnail_before = post_before.thumbnail_uuids
+                thumbnail_after = post.thumbnail_uuids
+
+                thumbnail_uuids_before = [image.image_uuid for image in thumbnail_before]
+                thumbnail_uuids_after = [image.image_uuid for image in thumbnail_after]
+
+                thumbnail_uuids_to_remove = [image_id for image_id in thumbnail_uuids_before if image_id not in thumbnail_uuids_after]
+                for uuid_to_remove in thumbnail_uuids_to_remove:
+                    cursor.execute(
+                        "UPDATE images_in_post SET is_deleted = TRUE "
+                        "WHERE post_id = :post_id AND image_uuid = :image_uuid;",
+                        {
+                            'post_id': post_id,
+                            'image_uuid': uuid_to_remove,
+                        }
+                    )
+
+                thumbnail_uuids_to_add = [image_uuid for image_uuid in thumbnail_uuids_after if image_uuid not in thumbnail_uuids_before]
+                for thumbnail_uuid_to_add in thumbnail_uuids_to_add:
+                    cursor.execute(
+                        'INSERT INTO images_in_post (image_uuid, post_id)'
+                        'VALUES (:image_uuid, :post_id);',
+                        {
+                            'image_uuid': thumbnail_uuid_to_add,
+                            'post_id': post_id,
+                        }
+                    )
+
 
         except Exception as exc:
             logger.error(exc)
@@ -123,7 +151,6 @@ class ControllerDatabase:
                      post.created,
                      post.modified,
                      post.status,
-                     post.thumbnail_uuid,
                      post.url_slug,
                      post.parent_post_id,
                      post.is_deleted
@@ -163,6 +190,17 @@ class ControllerDatabase:
                         attachment.attachment_uuid = attachment_uuid
                         attachment.is_deleted = is_deleted
                         post.attachments.append(attachment)
+
+                    thumbnail_query = cursor.execute(
+                        'SELECT image_uuid FROM images_in_post WHERE post_id = ? '
+                        'AND is_deleted = FALSE',
+                        [post.post_id]
+                    )
+                    post.thumbnail_uuids = []
+                    for row in thumbnail_query.fetchall():
+                        image_uuid = row[0]
+                        image = ModelImage(image_uuid=image_uuid)
+                        post.thumbnail_uuids.append(image)
 
                     post.children_posts = ControllerDatabase.get_posts(parent_post_id=post.post_id)
 

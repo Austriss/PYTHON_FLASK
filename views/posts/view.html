@@ -3,8 +3,12 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
-        <img class="thumbnail-jpeg" src="{{ url_for('static', filename='thumbnails/' + post.thumbnail_uuid) }}" />
+        {% if post.thumbnail_uuids %}
+        {% for thumbnail in post.thumbnail_uuids %}
+        <img class="thumbnail-jpeg" src="{{ url_for('static', filename='thumbnails/' + thumbnail.image_uuid) }}" />
 
+        {% endfor %}
+        {% endif %}
         <h1> {{ post.title }} </h1>
         <p>
             {{ post.body }}

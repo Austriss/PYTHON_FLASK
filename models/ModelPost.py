@@ -3,6 +3,7 @@ import dataclasses
 from models.EnumPostStatus import EnumPostStatus
 from models.ModelTag import ModelTag
 from models.ModelAttachment import ModelAttachment
+from models.ModelImage import ModelImage
 
 
 @dataclasses.dataclass
@@ -11,7 +12,7 @@ class ModelPost:
     url_slug: str = ""
     title: str = ""
     body: str = ""
-    thumbnail_uuid: str = ""
+    thumbnail_uuids: list[ModelImage] = dataclasses.field(default_factory=list)
     created: int = 0
     modified: int = 0
     status: EnumPostStatus = EnumPostStatus.not_set
