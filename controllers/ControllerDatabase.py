@@ -42,6 +42,15 @@ class ControllerDatabase:
                             'post_id': post_id,
                         }
                         )
+                for thumbnail in post.thumbnail_uuids:
+                    cursor.execute(
+                        'INSERT INTO images_in_post (image_uuid, post_id)'
+                        'VALUES (:image_uuid, :post_id);',
+                        {
+                            'image_uuid': thumbnail.image_uuid,
+                            'post_id': post_id,
+                        }
+                    )
         except Exception as exc:
             logger.error(exc)
         return post_id

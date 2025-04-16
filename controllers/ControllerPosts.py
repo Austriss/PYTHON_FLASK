@@ -2,6 +2,11 @@ import os
 import uuid
 from pathlib import Path
 from Logger_setup import logger
+import cv2
+import matplotlib.pyplot as plt
+import time
+from multiprocessing import Process, Manager
+import threading
 
 import slugify
 import flask
@@ -14,9 +19,88 @@ from models.ModelPost import ModelPost
 
 from flask_babel import Babel, _
 
+
 logger.info("logger from controllerposts")
 class ControllerPosts:
     blueprint = flask.Blueprint("posts", __name__, url_prefix="/posts")
+
+    @staticmethod
+    def resize_image(input_path, output_path):
+        img = cv2.imread(input_path)
+        print('Width: ', img.shape[1])
+        print('Height: ', img.shape[0])
+        img_05 = cv2.resize(img, None, fx=0.5, fy=0.5)
+        print('resized width: ', img_05.shape[1])
+        print('resized height: ', img_05.shape[0])
+        img_05 = cv2.resize(img_05, None, fx=0.5, fy=0.5)
+        print('resized width: ', img_05.shape[1])
+        print('resized height: ', img_05.shape[0])
+        extension = Path(output_path).suffix
+        output_path = str(Path(output_path).with_suffix('.jpg'))
+        save_path = ('./static/thumbnails/' + output_path)
+
+        cv2.imwrite(save_path, img_05)
+        return output_path
+
+    @staticmethod
+    def sequential_resize(images_to_resize, thumbnail_uuids):
+        results = []
+        start = time.time()
+        for temp_path, thumbnail_path in zip(images_to_resize, thumbnail_uuids):
+            result = ControllerPosts.resize_image(temp_path, thumbnail_path)
+            results.append(result)
+        timer = time.time() - start
+        print(f"Sequential time: {timer}")
+        return results
+
+    @staticmethod
+    def threading_resize(images_to_resize, thumbnail_uuids):
+        results = [None] * len(images_to_resize)
+        start = time.time()
+
+        def resize(i, temp_path_, thumbnail_path_):
+            results[i] = ControllerPosts.resize_image(temp_path_, thumbnail_path_)
+
+        threads = []
+
+        for i, (temp_path, thumbnail_path) in enumerate(zip(images_to_resize, thumbnail_uuids)):
+            t = threading.Thread(target=resize, args=(i, temp_path, thumbnail_path))
+            t.start()
+            threads.append(t)
+
+        for t in threads:
+            t.join()
+
+        timer = time.time() - start
+        print(f"threading time: {timer}")
+
+        return results
+
+    @staticmethod
+    def process_resize(i, temp_path, thumbnail_path, results):
+        results[i] = ControllerPosts.resize_image(temp_path, thumbnail_path)
+
+    @staticmethod
+    def multiprocess_resize(images_to_resize, thumbnail_uuids):
+        with Manager() as manager:
+            results = manager.list([None] * len(images_to_resize))
+            start = time.time()
+
+            processes = []
+
+            for i, (temp_path, thumbnail_path) in enumerate(zip(images_to_resize, thumbnail_uuids)):
+                p = Process(target=ControllerPosts.process_resize, args=(i, temp_path, thumbnail_path, results))
+                p.start()
+                processes.append(p)
+
+            for p in processes:
+                p.join()
+
+            timer = time.time() - start
+            print(f"multiprocessing time: {timer}")
+            results = list(results)
+            print("debug: results", results)
+            return results
 
     @staticmethod
     @blueprint.route("/new", methods=["POST", "GET"])
@@ -79,9 +163,12 @@ class ControllerPosts:
             post_tag_ids = request.form.getlist("post_tag_ids[]", type=int)
             post.all_tags = [tag for tag in all_tags if tag.tag_id in post_tag_ids]
 
-            new_thumbnail_uuids = []
             files_thumbnail = request.files.getlist('file_thumbnail')
-            print(f"files_thumbnail list: {files_thumbnail}")
+
+            process_type = request.form.get('process_type[]')
+            images_to_resize = []
+            thumbnail_uuids = []
+            new_thumbnail_uuids = []
             all_post_thumbnails = []
 
             for fp in files_thumbnail:
@@ -89,28 +176,44 @@ class ControllerPosts:
                     filename = fp.filename.lower()
                     extension = Path(filename).suffix
                     if extension in ['.png', '.jpg', '.jpeg']:
-                        filename_uuid = str(uuid.uuid4()) + extension
-                        path_thumbnails = './static/thumbnails/'
+                        filename_uuid = str(uuid.uuid4())# + extension
+                        path_thumbnails = './static/thumbnails'
                         if not os.path.exists(path_thumbnails):
                             os.makedirs(path_thumbnails)
-                        fp.save(f'{path_thumbnails}/{filename_uuid}')
-                        new_thumbnail_uuids.append(filename_uuid)
-                        image = ModelImage(image_uuid=filename_uuid)
-                        all_post_thumbnails.append(image)
+                        temp_path = f'{path_thumbnails}/temp{filename_uuid}.jpg'
+                        thumbnail_path = os.path.join(path_thumbnails, filename_uuid + '.jpg')
+                        fp.save(temp_path)
+                        images_to_resize.append(temp_path)
+                        thumbnail_uuids.append(filename_uuid + '.jpg')
+                        new_thumbnail_uuids.append(filename_uuid + '.jpg')
+
+            if process_type == 'sequential':
+                thumbnail_results = ControllerPosts.sequential_resize(images_to_resize, thumbnail_uuids)
+            if process_type == 'threading':
+                thumbnail_results = ControllerPosts.threading_resize(images_to_resize, thumbnail_uuids)
+            if process_type == 'multiprocessing':
+                thumbnail_results = ControllerPosts.multiprocess_resize(images_to_resize, thumbnail_uuids)
+            else:
+                thumbnail_results = ControllerPosts.sequential_resize(images_to_resize, thumbnail_uuids)
+
+            for file_uuid in thumbnail_results:
+                image = ModelImage(image_uuid=file_uuid)
+                all_post_thumbnails.append(image)
 
             if post_id:  # editing existing post
                 existing_post = ControllerDatabase.get_post(post_id=post_id)
                 if existing_post:
                     if all_post_thumbnails:
-                        existing_thumbnails = existing_post.thumbnail_uuids if existing_post.thumbnail_uuids else []
+                        if existing_post.thumbnail_uuids:
+                            existing_thumbnails = existing_post.thumbnail_uuids
+                        else:
+                            existing_thumbnails = []
                         post.thumbnail_uuids = existing_thumbnails + all_post_thumbnails
                     else:
                         post.thumbnail_uuids = existing_post.thumbnail_uuids
             else:
                 post.thumbnail_uuids = all_post_thumbnails
 
-            print(all_post_thumbnails)
-            print(post.thumbnail_uuids)
 
             fp = request.files['file_pdf']
             if fp and fp.filename:
@@ -195,3 +298,4 @@ class ControllerPosts:
             'posts/tags.html',
             tags=tags_json
         )
+

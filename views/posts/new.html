@@ -48,6 +48,20 @@
             <label> {{_('Thumbnail file')}} </label>
             <input type="file" name="file_thumbnail" multiple accept="image/png, image/jpeg, image/jpg">
 
+            <div class="each-tag">
+                <label for="multiprocessing"> Multiprocessing</label><br>
+              <input type="checkbox" id="multiprocessing" name="process_type[]" value="multiprocessing">
+            </div>
+            <div class="each-tag">
+                <label for="threading"> threading</label><br>
+              <input type="checkbox" id="threading" name="process_type[]" value="threading">
+            </div>
+            <div class="each-tag">
+                <label for="sequential"> sequential</label><br>
+              <input type="checkbox" id="sequential" name="process_type[]" value="sequential">
+            </div>
+
+
             <label> {{_('PDF files')}} </label>
             <input type="file" name="file_pdf" multiple accept="application/pdf">
             <input type="submit" value={{_("Save")}} />
