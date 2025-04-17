@@ -10,10 +10,14 @@
         <a href="/?lang=en">{{_('English')}}</a>
         <a href="/?lang=lv">{{_('Latvian')}}</a>
     </div>
+    <div class="button-to-tags">
+        <label> {{ _('tags: ') }} </label>
+        <a href="{{ url_for('tags.list_all_tags') }}"> {{ _('tags list') }} </a>
+    </div>
 </div>
 <div class="list-of-posts">
     {% for post in posts %}
-    <div style="padding-left: {{ 50 * post.depth }}px">         <!-- <div class="post-row"> -->
+    <div style="padding-left: {{ 50 * post.depth }}px">
         <div class="post-cell"> {{ _('Title :') }} {{ post.title }} </div>
         <div class="post-cell"> {{ _('modified :') }} {{ post.modified }}</div>
         <div class="action-cell">

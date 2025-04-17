@@ -5,6 +5,11 @@
 {% block content %}
 
         <h1> {% if post %} {{ _('Edit post') }} {% else %} {{ _('New post') }} {% endif %} </h1>
+        <div class="language-selector">
+            <label> {{ _('language: ') }}</label>
+            <a href="{{ url_for('posts.post_edit', post_id=post.post_id) }}?lang=en">{{_('English')}}</a>
+            <a href="{{ url_for('posts.post_edit', post_id=post.post_id) }}?lang=lv">{{_('Latvian')}}</a>
+        </div>
         <form action="{{ url_for('posts.post_edit') }}"
               method="POST"
               enctype="multipart/form-data"
@@ -49,15 +54,15 @@
             <input type="file" name="file_thumbnail" multiple accept="image/png, image/jpeg, image/jpg">
 
             <div class="each-tag">
-                <label for="multiprocessing"> Multiprocessing</label><br>
+                <label for="multiprocessing"> _('Multiprocessing') </label><br>
               <input type="checkbox" id="multiprocessing" name="process_type[]" value="multiprocessing">
             </div>
             <div class="each-tag">
-                <label for="threading"> threading</label><br>
+                <label for="threading"> _('threading') </label><br>
               <input type="checkbox" id="threading" name="process_type[]" value="threading">
             </div>
             <div class="each-tag">
-                <label for="sequential"> sequential</label><br>
+                <label for="sequential"> _('sequential') </label><br>
               <input type="checkbox" id="sequential" name="process_type[]" value="sequential">
             </div>
 

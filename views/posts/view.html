@@ -3,6 +3,11 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block content %}
+        <div class="language-selector">
+            <label> {{ _('language: ') }}</label>
+            <a href="{{ url_for('posts.post_view', url_slug=post.url_slug) }}?lang=en">{{_('English')}}</a>
+            <a href="{{ url_for('posts.post_view', url_slug=post.url_slug) }}?lang=lv">{{_('Latvian')}}</a>
+        </div>
         {% if post.thumbnail_uuids %}
         {% for thumbnail in post.thumbnail_uuids %}
         <img class="thumbnail-jpeg" src="{{ url_for('static', filename='thumbnails/' + thumbnail.image_uuid) }}" />
