@@ -200,3 +200,11 @@ form {
     margin-top: 40px;
     text-align: center;
 }
+
+.button-to-tags {
+    display: flex;
+    flex-direction: column;
+    grid-column: 3;
+    gap: $language_selector-gap;
+    padding-top: $language_selector-top-padding;
+}
