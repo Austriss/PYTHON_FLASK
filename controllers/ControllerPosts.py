@@ -38,7 +38,6 @@ class ControllerPosts:
         extension = Path(output_path).suffix
         output_path = str(Path(output_path).with_suffix('.jpg'))
         save_path = ('./static/thumbnails/' + output_path)
-
         cv2.imwrite(save_path, img_05)
         return output_path
 
@@ -153,7 +152,7 @@ class ControllerPosts:
                         post_tag_ids=post_tag_ids,
                         all_tags=all_tags,
                         post_parent_id_by_title=post_parent_id_by_title,
-                        existing_thumbnail_uuids = existing_thumbnail_uuids #!!!
+                        existing_thumbnail_uuids = existing_thumbnail_uuids
                         )
             post = ModelPost()
             post.title = request.form.get('post_title').strip()
@@ -275,9 +274,9 @@ class ControllerPosts:
         params_GET = flask.request.args
         message = ''
         if params_GET.get('deleted'):
-            message = _("post deleted")
+            message = _('post deleted')
         elif params_GET.get('edited'):
-            message = _("post edited")
+            message = _('post edited')
         elif params_GET.get('message'):
             message = params_GET.get('message')
 

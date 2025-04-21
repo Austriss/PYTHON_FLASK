@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-04-12 16:21+0300\n"
+"POT-Creation-Date: 2025-04-17 12:52+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,11 +17,11 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.17.0\n"
 
-#: controllers/ControllerPosts.py:162 main.py:51
+#: controllers/ControllerPosts.py:277 main.py:51
 msgid "post deleted"
 msgstr ""
 
-#: controllers/ControllerPosts.py:164 main.py:53
+#: controllers/ControllerPosts.py:279 main.py:53
 msgid "post edited"
 msgstr ""
 
@@ -31,6 +31,10 @@ msgstr ""
 
 #: main.py:87
 msgid "wrong email or password"
+msgstr ""
+
+#: controllers/ControllerPosts.py:121
+msgid "no parent"
 msgstr ""
 
 #: static/javascript/edit_tag.jsx:41
@@ -57,12 +61,12 @@ msgstr ""
 msgid "label:"
 msgstr ""
 
-#: static/javascript/tags_list.jsx:45 views/posts/home.html:28
-#: views/posts/view.html:37
+#: static/javascript/tags_list.jsx:45 views/posts/home.html:32
+#: views/posts/view.html:46
 msgid "Edit"
 msgstr ""
 
-#: static/javascript/tags_list.jsx:46 views/posts/view.html:31
+#: static/javascript/tags_list.jsx:46 views/posts/view.html:40
 msgid "Delete"
 msgstr ""
 
@@ -70,15 +74,18 @@ msgstr ""
 msgid "login"
 msgstr ""
 
-#: views/login.html:8 views/posts/home.html:9
+#: views/login.html:8 views/posts/home.html:9 views/posts/new.html:9
+#: views/posts/view.html:7
 msgid "language: "
 msgstr ""
 
-#: views/login.html:9 views/posts/home.html:10
+#: views/login.html:9 views/posts/home.html:10 views/posts/new.html:10
+#: views/posts/view.html:8
 msgid "English"
 msgstr ""
 
-#: views/login.html:10 views/posts/home.html:11
+#: views/login.html:10 views/posts/home.html:11 views/posts/new.html:11
+#: views/posts/view.html:9
 msgid "Latvian"
 msgstr ""
 
@@ -102,23 +109,31 @@ msgstr ""
 msgid "List of posts"
 msgstr ""
 
-#: views/posts/home.html:17
+#: views/posts/home.html:14
+msgid "tags: "
+msgstr ""
+
+#: views/posts/home.html:15
+msgid "tags list"
+msgstr ""
+
+#: views/posts/home.html:21
 msgid "Title :"
 msgstr ""
 
-#: views/posts/home.html:18
+#: views/posts/home.html:22
 msgid "modified :"
 msgstr ""
 
-#: views/posts/home.html:23
+#: views/posts/home.html:27
 msgid "delete"
 msgstr ""
 
-#: views/posts/home.html:40 views/posts/new.html:7
+#: views/posts/home.html:44 views/posts/new.html:7
 msgid "New post"
 msgstr ""
 
-#: views/posts/home.html:42
+#: views/posts/home.html:46
 msgid "logout"
 msgstr ""
 
@@ -126,47 +141,47 @@ msgstr ""
 msgid "Edit post"
 msgstr ""
 
-#: views/posts/new.html:13
+#: views/posts/new.html:18
 msgid "title"
 msgstr ""
 
-#: views/posts/new.html:16
+#: views/posts/new.html:21
 msgid "body"
 msgstr ""
 
-#: views/posts/new.html:20
+#: views/posts/new.html:25
 msgid "post parent"
 msgstr ""
 
-#: views/posts/new.html:28
+#: views/posts/new.html:33
 msgid "Tags"
 msgstr ""
 
-#: views/posts/new.html:43
-msgid "current thumbnail:"
+#: views/posts/new.html:48
+msgid "current thumbnails:"
 msgstr ""
 
-#: views/posts/new.html:46
+#: views/posts/new.html:53
 msgid "Thumbnail file"
 msgstr ""
 
-#: views/posts/new.html:49
+#: views/posts/new.html:70
 msgid "PDF files"
 msgstr ""
 
-#: views/posts/new.html:51
+#: views/posts/new.html:72
 msgid "Save"
 msgstr ""
 
-#: views/posts/view.html:13
+#: views/posts/view.html:22
 msgid "posts tags:"
 msgstr ""
 
-#: views/posts/view.html:18
+#: views/posts/view.html:27
 msgid "PDF files:"
 msgstr ""
 
-#: views/posts/view.html:26
+#: views/posts/view.html:35
 msgid "no pdfs uploaded"
 msgstr ""
 
