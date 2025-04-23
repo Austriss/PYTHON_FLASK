@@ -351,10 +351,9 @@ class ControllerDatabase:
                     tag.label = label
                     tag.is_deleted = is_deleted
                     tags.append(tag)
-            return tags
-
         except Exception as exc:
             logger.error(exc)
+        return tags
 
     @staticmethod
     def delete_tag(tag_id: int) -> bool:
@@ -413,11 +412,9 @@ class ControllerDatabase:
                     tag.label,
                     tag.is_deleted
                     ) = col
-            return tag
-
         except Exception as exc:
             logger.error(exc)
-
+        return tag
 
     @staticmethod
     def update_tag(tag_id: int, tag=ModelTag) -> bool:
@@ -444,7 +441,6 @@ class ControllerDatabase:
                     'VALUES (:label);',
                     tag.__dict__
                     )
-
         except Exception as exc:
             logger.error(exc)
         return tag_id
