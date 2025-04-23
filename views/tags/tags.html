@@ -1,20 +1,11 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/react_base.html' %}
 
 {% block title %} Tags {% endblock %}
 
 {% block content %}
-
-<body>
-
     <div id="root"></div>
-
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-    <script type="text/babel" src="{{ url_for('static', filename='javascript/tags_list.jsx') }}"></script>
-
-</body>
-
 {% endblock %}
+
+{% block source %}
+    <script type="text/babel" src="{{ url_for('static', filename='javascript/tags_list.jsx') }}"></script>
+{% endblock source %}

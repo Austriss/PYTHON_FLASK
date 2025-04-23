@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title> {% block title %} react {% endblock %} </title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
+</head>
+<body>
+    {% block content %}  {% endblock %}
+
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    {% block source %}
+    <script type="text/babel" src="{{ url_for('static', filename='javascript/edit_tag.jsx') }}"></script>
+    {% endblock source %}
+
+</body>
+</html>

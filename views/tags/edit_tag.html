@@ -1,19 +1,13 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/react_base.html' %}
 
 {% block title %} Tag editing {% endblock %}
 
 {% block content %}
-
-<body>
     <div id="root"></div>
+{% endblock content %}
 
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
+{% block source %}
     <script type="text/babel" src="{{ url_for('static', filename='javascript/edit_tag.jsx') }}"></script>
+{% endblock source %}
 
-</body>
 
-{% endblock %}
