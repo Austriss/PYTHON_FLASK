@@ -4,8 +4,13 @@
 
 {% block content %}
     <div id="root"></div>
-{% endblock content %}
+    <script>
+        window.currentTag = {{ current_tag | tojson }};
+        window.baseUrl = {{ base_url | tojson }};
+    </script>
 
+
+{% endblock content %}
 {% block source %}
     <script type="text/babel" src="{{ url_for('static', filename='javascript/edit_tag.jsx') }}"></script>
 {% endblock source %}
