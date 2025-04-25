@@ -9,12 +9,16 @@ from models.ModelTag import ModelTag
 
 class ControllerTags:
     blueprint = flask.Blueprint("tags", __name__, url_prefix="/tags")
+    BASE_URL = 'http://localhost:8000/'
 
     @staticmethod
     @blueprint.route("/edit/<tag_id>", methods=["POST","GET"])
     def tag_edit(tag_id):
+        current_tag = ControllerDatabase.get_tag_from_id(tag_id)
         return flask.render_template(
-            'tags/edit_tag.html'
+            'tags/edit_tag.html',
+            current_tag=current_tag,
+            base_url=ControllerTags.BASE_URL
             )
 
     @staticmethod
@@ -30,21 +34,18 @@ class ControllerTags:
                 return redirect(url_for('tags.list_all_tags'))
 
         return flask.render_template(
-            'tags/new.html'
+            'tags/new.html',
+            base_url=ControllerTags.BASE_URL
             )
-
-    @staticmethod
-    @blueprint.route('/get_tags', methods=["GET"])
-    def get_all_tags():
-        tags = ControllerDatabase.get_all_tags()
-        tags_json = jsonify(tags)
-        return tags_json
 
     @staticmethod
     @blueprint.route('/tags_list', methods=["GET"])
     def list_all_tags():
+        tags = ControllerDatabase.get_all_tags()
         return flask.render_template(
             "tags/tags.html",
+            tags=tags,
+            base_url=ControllerTags.BASE_URL
             )
 
     @staticmethod
