@@ -4,25 +4,25 @@
 
 {% block content %}
 
-        <h1> {% if post %} {{ _('Edit post') }} {% else %} {{ _('New post') }} {% endif %} </h1>
+        <h1> {% if post %} {{ _('h1_edit_post') }} {% else %} {{ _('h1_new_post') }} {% endif %} </h1>
         <div class="language-selector">
-            <label> {{ _('language: ') }}</label>
-            <a href="{{ url_for('posts.post_edit', post_id=post.post_id) }}?lang=en">{{_('English')}}</a>
-            <a href="{{ url_for('posts.post_edit', post_id=post.post_id) }}?lang=lv">{{_('Latvian')}}</a>
+            <label> {{ _('label_language_selector_title') }}</label>
+            <a href="{{ url_for('posts.post_edit', post_id=post.post_id) }}?lang=en">{{_('a_language_selector_en')}}</a>
+            <a href="{{ url_for('posts.post_edit', post_id=post.post_id) }}?lang=lv">{{_('a_language_selector_lv')}}</a>
         </div>
         <form action="{{ url_for('posts.post_edit') }}"
               method="POST"
               enctype="multipart/form-data"
               >
             <input type="hidden" name="post_id" value="{{ post.post_id if post else '' }}">
-            <label>{{_('title')}}</label>
+            <label>{{_('label_new_title')}}</label>
               <input type="text" name="post_title" value="{{ post.title if post else '' }}" />
 
-            <label> {{_('body')}} </label>
+            <label> {{_('label_post_body_title')}} </label>
             <label>
                 <textarea name="post_body"> {{ post.body if post else '' }} </textarea>
             </label>
-            <label> {{_('post parent')}}</label>
+            <label> {{_('label_post_parent_selector_title')}}</label>
             <select name="parent_post_id">
 
                 {% for item in post_parent_id_by_title %}
@@ -30,7 +30,7 @@
                 {% endfor %}
             </select>
 
-            <label class="tags-title"> {{_('Tags')}} </label>
+            <label class="tags-title"> {{_('label_tags_selector_title')}} </label>
             <div class="tags">
                 {% for tag in all_tags %}
                 <div class="each-tag">
@@ -45,29 +45,29 @@
             </div>
 
             {% if post and post.thumbnail_uuids %}
-            <div> {{_('current thumbnails:')}} </div>
+            <div> {{_('div_current_thumbnails_title')}} </div>
             {% for thumbnail in post.thumbnail_uuids %}
             <img class="thumbnail" src="{{ url_for('static', filename='thumbnails/' + thumbnail.image_uuid) }}" />
             {% endfor %}
             {% endif %}
-            <label> {{_('Thumbnail file')}} </label>
+            <label> {{_('label_thumbnail_file_title')}} </label>
             <input type="file" name="file_thumbnail" multiple accept="image/png, image/jpeg, image/jpg">
 
             <div class="each-tag">
-                <label for="multiprocessing"> _('Multiprocessing') </label><br>
+                <label for="multiprocessing"> _('label_multiprocessing_selection') </label><br>
               <input type="radio" id="multiprocessing" name="process_type[]" value="multiprocessing">
             </div>
             <div class="each-tag">
-                <label for="threading"> _('threading') </label><br>
+                <label for="threading"> _('label_threading_selection') </label><br>
               <input type="radio" id="threading" name="process_type[]" value="threading">
             </div>
             <div class="each-tag">
-                <label for="sequential"> _('sequential') </label><br>
+                <label for="sequential"> _('label_sequential_selection') </label><br>
               <input type="radio" id="sequential" name="process_type[]" value="sequential">
             </div>
 
 
-            <label> {{_('PDF files')}} </label>
+            <label> {{_('label_pdf_file_title')}} </label>
             <input type="file" name="file_pdf" multiple accept="application/pdf">
             <input type="submit" value={{_("Save")}} />
         </form>
