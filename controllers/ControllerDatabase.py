@@ -238,7 +238,7 @@ class ControllerDatabase:
         try:
             with UtilDatabaseCursor() as cursor:
                 query = cursor.execute(
-                f'SELECT post_id FROM posts WHERE parent_post_id {'=' if parent_post_id is not None else 'IS'} ?',
+                f"SELECT post_id FROM posts WHERE parent_post_id {'=' if parent_post_id is not None else 'IS'} ?",
                 [parent_post_id]
                 )
 
