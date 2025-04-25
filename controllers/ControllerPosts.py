@@ -3,8 +3,6 @@ import uuid
 from pathlib import Path
 from Logger_setup import logger
 import cv2
-import matplotlib.pyplot as plt
-import time
 
 import multiprocessing
 from multiprocessing import Process, Pool
@@ -146,16 +144,15 @@ class ControllerPosts:
                     filename = fp.filename.lower()
                     extension = Path(filename).suffix
                     if extension in ['.png', '.jpg', '.jpeg']:
-                        filename_uuid = str(uuid.uuid4())# + extension
+                        filename_uuid = str(uuid.uuid4()) + extension
                         path_thumbnails = './static/thumbnails'
                         if not os.path.exists(path_thumbnails):
                             os.makedirs(path_thumbnails)
-                        temp_path = f'{path_thumbnails}/temp{filename_uuid}.jpg'
-                        thumbnail_path = os.path.join(path_thumbnails, filename_uuid + '.jpg')
+                        temp_path = f'{path_thumbnails}/temp{filename_uuid}'
                         fp.save(temp_path)
                         images_to_resize.append(temp_path)
-                        thumbnail_uuids.append(filename_uuid + '.jpg')
-                        new_thumbnail_uuids.append(filename_uuid + '.jpg')
+                        thumbnail_uuids.append(filename_uuid)
+                        new_thumbnail_uuids.append(filename_uuid)
 
             if process_type == 'sequential':
                 thumbnail_results = ControllerPosts.sequential_resize(images_to_resize, thumbnail_uuids)
@@ -266,5 +263,5 @@ class ControllerPosts:
         return flask.render_template(
             'posts/tags.html',
             tags=tags_json
-        )
+            )
 
