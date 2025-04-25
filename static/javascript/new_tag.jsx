@@ -3,24 +3,28 @@ const NewTag = () => {
         const [tagData, setTagData] = React.useState({label: ''})
 
     const handleEdit = (event) => {
-        const {name, value} = event.target;
-        setTagData({...tagData, [name]: value});
+        const newLabel = event.target.value;
+        setTagData(previous => ({
+                ...previous,
+                label: newLabel
+                }))
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        fetch(`http://localhost:8000/tags/new`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(tagData),
-        })
-            .catch(error => {
-                console.error(error);
-            });
-        window.location.href = `/tags/tags_list`;
-    };
+            try{
+                const res = await fetch(`${baseUrl}tags/new`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        },
+                    body: JSON.stringify(tagData),
+                })
+                window.location.href = `/tags/tags_list`;
+            } catch (e) {
+                console.error(e);
+            }
+    }
 
     return (
         <div>
@@ -46,6 +50,7 @@ const NewTag = () => {
 const container = document.getElementById('root');
 if (container) {
     try {
+        const baseUrl = window.baseUrl;
         const root = ReactDOM.createRoot(container);
         root.render(<NewTag />);
     } catch (error) {

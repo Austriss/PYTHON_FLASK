@@ -1,46 +1,35 @@
 
 const EditTag = ({ tagId }) => {
-        const [tagData, setTagData] = React.useState({tagId: 0, label: ''})
-
-
-    React.useEffect(() => {
-        fetch(`http://localhost:8000/tags/get_tag/${tagId}`)
-            .then(response => {
-                return response.json();
-            })
-            .then(data => {
-                setTagData({tagId: data.tagId, label: data.label, is_deleted: data.is_deleted});
-            })
-            .catch(error => {
-                console.error(error);
-            });
-    }, [tagId]);
+    const [tagData, setTagData] = React.useState({tagId: 0, label: currentTag.label})
 
     const handleEdit = (event) => {
-        const {name, value} = event.target;
-        setTagData({...tagData, [name]: value});
+        const newLabel = event.target.value;
+        setTagData(previous => ({
+                ...previous,
+                label: newLabel
+                }))
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        fetch(`http://localhost:8000/tags/update_tag/${tagId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(tagData),
-        })
-            .catch(error => {
-                console.error(error);
-            });
-        window.location.href = `/tags/tags_list`;
+            try {
+                const res = await fetch(`${baseUrl}tags/update_tag/${tagId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        },
+                    body: JSON.stringify(tagData),
+                })
+                window.location.href = `/tags/tags_list`;
+            } catch (e) {
+                console.error(e);
+            }
     };
-
     return (
         <div>
-            <h1> _('Editing tag') </h1>
+            <h1> Editing tag </h1>
             <form onSubmit={handleSubmit} >
-                <h2> _('Label:') </h2>
+                <h2> Label </h2>
                 <input
                     type="text"
                     id="label"
@@ -50,7 +39,7 @@ const EditTag = ({ tagId }) => {
                     required
                     />
                 <div>
-                    <button type="submit"> _('Submit') </button>
+                    <button type="submit"> Submit </button>
                 </div>
             </form>
         </div>
@@ -60,10 +49,12 @@ const EditTag = ({ tagId }) => {
 const container = document.getElementById('root');
 if (container) {
     try {
+        const baseUrl = window.baseUrl;
+        const currentTag = window.currentTag;
         const pathIntoParts = window.location.pathname.split("/");
         const urlTagId = pathIntoParts[pathIntoParts.length -1];
         const root = ReactDOM.createRoot(container);
-        root.render(<EditTag tagId={urlTagId} />);
+        root.render(<EditTag tagId={urlTagId} currentTag={currentTag} baseUrl={baseUrl} />);
     } catch (error) {
         console.error(error);
     }
