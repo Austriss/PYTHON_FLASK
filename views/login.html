@@ -1,13 +1,13 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %} {{_('login')}} {% endblock %}
+{% block title %} {{_('login_title')}} {% endblock %}
 
 {% block content %}
 
     <div class="language-selector">
-        <label> {{ _('language: ') }}</label>
-        <a href="/?lang=en">{{_('English')}}</a>
-        <a href="/?lang=lv">{{_('Latvian')}}</a>
+        <label> {{ _('label_language_selector_title') }}</label>
+        <a href="/?lang=en">{{_('a_language_selector_en')}}</a>
+        <a href="/?lang=lv">{{_('a_language_selector_lv')}}</a>
     </div>
 
     {% if message|length > 0 %}
@@ -15,10 +15,10 @@
     {% endif %}
     <div class="login-form">
     <form action="{{ url_for('login') }}" method="POST">
-        <label> {{_('Email')}} </label>
+        <label> {{_('label_login_email_title')}} </label>
         <input type="email" name="email" />
 
-        <label> {{_('Password')}} </label>
+        <label> {{_('label_login_password_title')}} </label>
         <input type="password" name="password" />
         <input type="submit" value="{{_('Login')}}" />
     </form>
