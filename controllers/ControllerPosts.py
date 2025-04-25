@@ -229,7 +229,7 @@ class ControllerPosts:
             )
 
     @staticmethod
-    @blueprint.route("/delete/<post_id>", methods=["POST"])
+    @blueprint.route("/delete/<post_id>", methods=["POST", "GET"])
     def post_delete(post_id: int):
         ControllerDatabase.delete_post(post_id)
         return redirect(url_for('posts.list_all_posts') + '/?deleted=1')
