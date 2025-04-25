@@ -34,12 +34,12 @@
             {% else %}
                 <a> {{_('no pdfs uploaded')}} </a>
             {% endif %}
-        <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
+        <br>
+        <a href="{{ url_for('posts.post_delete', post_id=post.post_id) }}">
             <input type="hidden" value="delete" name="button_type" />
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />
             <input type="submit" value="{{_('Delete')}}" name="delete_post"/>
-            </form>
-
+        </a>
         <a href="{{ url_for('posts.post_edit', post_id=post.post_id) }}" >
             <input type="hidden" value="edit" name="button_type" />
             <input type="hidden" value="{{ post.post_id }}" name="post_id" />

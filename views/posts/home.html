@@ -22,16 +22,16 @@
         <div class="post-cell"> {{ _('modified :') }} {{ post.modified }}</div>
         <div class="action-cell">
             {% if is_logged_in %}
-            <form action="{{ url_for('posts.post_delete', post_id=post.post_id) }}" method="POST">
+            <a href="{{ url_for('posts.post_delete', post_id=post.post_id) }}">
                 <input type="hidden" value="{{ post.post_id }}" name="post_id" />
                 <input type="submit" value="{{ _('delete') }}" />
-            </form>
-            <form action="{{ url_for('posts.post_edit', post_id=post.post_id) }}" method="POST">
+            </a>
+            <a href="{{ url_for('posts.post_edit', post_id=post.post_id) }}">
                 <input type="hidden" value="edit" name="button_type" />
                 <input type="hidden" value="{{ post.post_id }}" name="post_id" />
                 <input type="submit" value="{{_('Edit')}}" name="edit_post" />
             {% endif %}
-            </form>
+            </a>
         </div>
     </div>
     {% endfor %}
