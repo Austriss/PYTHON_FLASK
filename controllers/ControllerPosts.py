@@ -5,8 +5,11 @@ from Logger_setup import logger
 import cv2
 import matplotlib.pyplot as plt
 import time
-from multiprocessing import Process, Manager
+
+import multiprocessing
+from multiprocessing import Process, Pool
 import threading
+from concurrent.futures import ThreadPoolExecutor
 
 import slugify
 import flask
@@ -26,80 +29,48 @@ class ControllerPosts:
 
     @staticmethod
     def resize_image(input_path, output_path):
-        img = cv2.imread(input_path)
-        print('Width: ', img.shape[1])
-        print('Height: ', img.shape[0])
-        img_05 = cv2.resize(img, None, fx=0.5, fy=0.5)
-        print('resized width: ', img_05.shape[1])
-        print('resized height: ', img_05.shape[0])
-        img_05 = cv2.resize(img_05, None, fx=0.5, fy=0.5)
-        print('resized width: ', img_05.shape[1])
-        print('resized height: ', img_05.shape[0])
-        extension = Path(output_path).suffix
-        output_path = str(Path(output_path).with_suffix('.jpg'))
-        save_path = ('./static/thumbnails/' + output_path)
-        cv2.imwrite(save_path, img_05)
+        try:
+            img = cv2.imread(input_path)
+            img_05 = cv2.resize(img, None, fx=0.5, fy=0.5)
+            img_05 = cv2.resize(img_05, None, fx=0.5, fy=0.5)
+            output_path = str(Path(output_path).with_suffix('.jpg'))
+            save_path = ('./static/thumbnails/' + output_path)
+            cv2.imwrite(save_path, img_05)
+        except Exception as e:
+            logger.error(e)
         return output_path
 
     @staticmethod
     def sequential_resize(images_to_resize, thumbnail_uuids):
         results = []
-        start = time.time()
         for temp_path, thumbnail_path in zip(images_to_resize, thumbnail_uuids):
             result = ControllerPosts.resize_image(temp_path, thumbnail_path)
             results.append(result)
-        timer = time.time() - start
-        print(f"Sequential time: {timer}")
         return results
 
     @staticmethod
     def threading_resize(images_to_resize, thumbnail_uuids):
-        results = [None] * len(images_to_resize)
-        start = time.time()
+        results = []
+        number_of_cores = os.cpu_count()
 
-        def resize(i, temp_path_, thumbnail_path_):
-            results[i] = ControllerPosts.resize_image(temp_path_, thumbnail_path_)
+        tasks = [(temp_path, thumbnail_uuid) for temp_path, thumbnail_uuid in zip(images_to_resize, thumbnail_uuids)]
 
-        threads = []
-
-        for i, (temp_path, thumbnail_path) in enumerate(zip(images_to_resize, thumbnail_uuids)):
-            t = threading.Thread(target=resize, args=(i, temp_path, thumbnail_path))
-            t.start()
-            threads.append(t)
-
-        for t in threads:
-            t.join()
-
-        timer = time.time() - start
-        print(f"threading time: {timer}")
+        with ThreadPoolExecutor(max_workers=number_of_cores) as executor:
+            results = executor.map(ControllerPosts.resize_image, tasks)
 
         return results
 
     @staticmethod
-    def process_resize(i, temp_path, thumbnail_path, results):
-        results[i] = ControllerPosts.resize_image(temp_path, thumbnail_path)
-
-    @staticmethod
     def multiprocess_resize(images_to_resize, thumbnail_uuids):
-        with Manager() as manager:
-            results = manager.list([None] * len(images_to_resize))
-            start = time.time()
+        processes = None
 
-            processes = []
+        tasks = [(temp_path, thumbnail_uuid) for temp_path, thumbnail_uuid in zip(images_to_resize, thumbnail_uuids)]
 
-            for i, (temp_path, thumbnail_path) in enumerate(zip(images_to_resize, thumbnail_uuids)):
-                p = Process(target=ControllerPosts.process_resize, args=(i, temp_path, thumbnail_path, results))
-                p.start()
-                processes.append(p)
+        with multiprocessing.Pool(processes=processes) as pool:
+            results = pool.starmap(ControllerPosts.resize_image, tasks)
 
-            for p in processes:
-                p.join()
-
-            timer = time.time() - start
-            print(f"multiprocessing time: {timer}")
-            results = list(results)
-            print("debug: results", results)
-            return results
+        results = list(results)
+        return results
 
     @staticmethod
     @blueprint.route("/new", methods=["POST", "GET"])
@@ -255,7 +226,6 @@ class ControllerPosts:
     @blueprint.route("/view/<url_slug>", methods=["GET"])
     def post_view(url_slug: str):
         post = ControllerDatabase.get_post(url_slug=url_slug)
-        print(post.thumbnail_uuids)
         return flask.render_template(
             'posts/view.html',
             post=post
