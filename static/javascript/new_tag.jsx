@@ -28,9 +28,9 @@ const NewTag = () => {
 
     return (
         <div>
-            <h1> _('New tag') </h1>
+            <h1> New tag </h1>
             <form onSubmit={handleSubmit} >
-                <h2> _('Label:') </h2>
+                <h2> Label </h2>
                 <input
                     type="text"
                     id="label"
@@ -40,7 +40,7 @@ const NewTag = () => {
                     required
                     />
                 <div>
-                    <button type="submit"> _('Submit') </button>
+                    <button type="submit"> Submit </button>
                 </div>
             </form>
         </div>
